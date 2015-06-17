@@ -48,6 +48,9 @@ void BSONObjBuilder::appendMinForType(StringData fieldName, int t) {
         case NumberLong:
             append(fieldName, -std::numeric_limits<double>::max());
             return;
+        case NumberDecimal:
+            append(fieldName, Decimal128::kNegativeInfinity);
+            return;
         case Symbol:
         case String:
             append(fieldName, "");
@@ -118,6 +121,9 @@ void BSONObjBuilder::appendMaxForType(StringData fieldName, int t) {
         case NumberLong:
             append(fieldName, std::numeric_limits<double>::max());
             return;
+        case NumberDecimal:
+            append(fieldName, Decimal128::kPositiveInfinity);
+            return;
         case Symbol:
         case String:
             appendMinForType(fieldName, Object);
@@ -177,7 +183,6 @@ void BSONObjBuilder::appendMaxForType(StringData fieldName, int t) {
     log() << "type not supported for appendMaxElementForType: " << t;
     uassert(14853, "type not supported for appendMaxElementForType", false);
 }
-
 
 bool BSONObjBuilder::appendAsNumber(StringData fieldName, const string& data) {
     if (data.size() == 0 || data == "-" || data == ".")
