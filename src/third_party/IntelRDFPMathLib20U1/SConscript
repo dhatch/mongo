@@ -272,12 +272,9 @@ cpp_defines = {
 	'GLOBAL_RND': '0',
 	'GLOBAL_FLAGS': '0',
 	'UNCHANGED_BINARY_FLAGS': '0',
-	# 'LIBPATH': '/Users/raymondjacobson/playground/IntelRDFPMathLib20U1/LIBRARY',
-	# 'LIBS': '/Users/raymondjacobson/playground/IntelRDFPMathLib20U1/LIBRARY/libbid.a',
-	# 'USE_COMPILER_F128_TYPE': '0',
+	'USE_COMPILER_F128_TYPE': '0',
 }
 env.Append(CPPDEFINES = cpp_defines)
-# env.AppendENVPath('LIB', '/Users/raymondjacobson/playground/IntelRDFPMathLib20U1/LIBRARY')
 env.Library(
     target='intel_decimal128',
     source=source_files,
