@@ -84,6 +84,7 @@ namespace mutablebson {
         inline int32_t getValueInt() const;
         inline Timestamp getValueTimestamp() const;
         inline int64_t getValueLong() const;
+        inline Decimal128 getValueDecimal() const;
         inline bool isValueMinKey() const;
         inline bool isValueMaxKey() const;
         inline SafeNum getValueSafeNum() const;
