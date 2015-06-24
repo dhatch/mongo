@@ -1475,7 +1475,8 @@ namespace mutablebson {
         const BSONType type = impl.getType(thisRep);
         return ((type == mongo::NumberLong) ||
                 (type == mongo::NumberInt) ||
-                (type == mongo::NumberDouble));
+                (type == mongo::NumberDouble) ||
+                (type == mongo::NumberDecimal));
     }
 
     bool Element::isIntegral() const {
@@ -1873,6 +1874,15 @@ namespace mutablebson {
         ElementRep thisRep = impl.getElementRep(_repIdx);
         const StringData fieldName = impl.getFieldNameForNewElement(thisRep);
         Element newValue = getDocument().makeElementLong(fieldName, value);
+        return setValue(newValue._repIdx);
+    }
+
+    Status Element::setValueDecimal(const Decimal128 value) {
+        verify(ok());
+        Document::Impl& impl = getDocument().getImpl();
+        ElementRep thisRep = impl.getElementRep(_repIdx);
+        const StringData fieldName = impl.getFieldNameForNewElement(thisRep);
+        Element newValue = getDocument().makeElementDecimal(fieldName, value);
         return setValue(newValue._repIdx);
     }
 
@@ -2495,6 +2505,16 @@ namespace mutablebson {
         const int leafRef = builder.len();
         builder.append(fieldName, static_cast<long long int>(value));
         return Element(this, impl.insertLeafElement(leafRef, fieldName.size() + 1));
+    }
+
+    Element Document::makeElementDecimal(StringData fieldName, const Decimal128 value) {
+          Impl& impl = getImpl();
+          dassert(impl.doesNotAlias(fieldName));
+
+          BSONObjBuilder& builder = impl.leafBuilder();
+          const int leafRef = builder.len();
+          builder.append(fieldName, value);
+          return Element(this, impl.insertLeafElement(leafRef, fieldName.size() + 1));
     }
 
     Element Document::makeElementMinKey(StringData fieldName) {
