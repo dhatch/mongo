@@ -133,6 +133,10 @@ namespace mutablebson {
         return pushBack(getDocument().makeElementTimestamp(fieldName, value));
     }
 
+    Status Element::appendDecimal(StringData fieldName, Decimal128 value) {
+        return pushBack(getDocument().makeElementDecimal(fieldName, value));
+    }
+
     Status Element::appendLong(StringData fieldName, int64_t value) {
         return pushBack(getDocument().makeElementLong(fieldName, value));
     }
