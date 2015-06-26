@@ -54,7 +54,6 @@ public:
          * Default to zero, copy constructor, and from size 2 uint64_t array
          */
         Decimal128Value();
-        Decimal128Value(const Decimal128Value& dval);
         Decimal128Value(const uint64_t dval[2]);
     };
 
@@ -103,7 +102,6 @@ public:
      * "-200E9999999999" --> -Inf
      */
     Decimal128(std::string stringValue, RoundingMode roundMode = kRoundTiesToEven);
-    ~Decimal128();
 
     /**
      * These functions get the inner Decimal128Value struct storing the
@@ -117,15 +115,15 @@ public:
      * This set of functions converts a Decimal128 to a certain numeric type with a
      * given rounding mode.
      */
-    int32_t toInt(RoundingMode roundMode = kRoundTiesToEven);
-    int64_t toLong(RoundingMode roundMode = kRoundTiesToEven);
-    double toDouble(RoundingMode roundMode = kRoundTiesToEven);
+    int32_t toInt(RoundingMode roundMode = kRoundTiesToEven) const;
+    int64_t toLong(RoundingMode roundMode = kRoundTiesToEven) const;
+    double toDouble(RoundingMode roundMode = kRoundTiesToEven) const;
 
     /**
      * This function converts a Decimal128 to a string with syntax similar to the
      * Decimal128 string constructor.
      */
-    std::string toString();
+    std::string toString() const;
 
     /**
      * This set of functions converts a Decimal128 to a certain numerical type and
@@ -133,17 +131,17 @@ public:
      * the conversion has been performed exactly. In other words, it returns
      * whether the Decimal128 is truly an int, long, or double.
      */
-    std::pair<int32_t, bool> isAndToInt(RoundingMode roundMode = kRoundTiesToEven);
-    std::pair<int64_t, bool> isAndToLong(RoundingMode roundMode = kRoundTiesToEven);
-    std::pair<double, bool> isAndToDouble(RoundingMode roundMode = kRoundTiesToEven);
+    std::pair<int32_t, bool> isAndToInt(RoundingMode roundMode = kRoundTiesToEven) const;
+    std::pair<int64_t, bool> isAndToLong(RoundingMode roundMode = kRoundTiesToEven) const;
+    std::pair<double, bool> isAndToDouble(RoundingMode roundMode = kRoundTiesToEven) const;
 
     /**
      * This set of functions check whether a Decimal128 is Zero, NaN, or +/- Inf
      */
-    bool isZero();
-    bool isNaN();
-    bool isInfinite();
-    bool isNegative();
+    bool isZero() const;
+    bool isNaN() const;
+    bool isInfinite() const;
+    bool isNegative() const;
 
     /**
      * This set of mathematical operation functions takes a single Decimal128
@@ -153,10 +151,10 @@ public:
      * the supplied rounding mode is invoked (defeaulting to kRoundTiesToEven).
      * NaN and +/- Inf are valid arguments and return values.
      */
-    Decimal128 add(const Decimal128& rhs, RoundingMode roundMode = kRoundTiesToEven);
-    Decimal128 subtract(const Decimal128& rhs, RoundingMode roundMode = kRoundTiesToEven);
-    Decimal128 multiply(const Decimal128& rhs, RoundingMode roundMode = kRoundTiesToEven);
-    Decimal128 divide(const Decimal128& rhs, RoundingMode roundMode = kRoundTiesToEven);
+    Decimal128 add(const Decimal128& rhs, RoundingMode roundMode = kRoundTiesToEven) const;
+    Decimal128 subtract(const Decimal128& rhs, RoundingMode roundMode = kRoundTiesToEven) const;
+    Decimal128 multiply(const Decimal128& rhs, RoundingMode roundMode = kRoundTiesToEven) const;
+    Decimal128 divide(const Decimal128& rhs, RoundingMode roundMode = kRoundTiesToEven) const;
 
     /**
      * This function quantizes the current decimal given a quantum reference
@@ -169,12 +167,12 @@ public:
      * comply with the IEEE 754-2008 spec. The comparison returns true if the caller
      * is <equal, notequal, greater, greaterequal, less, lessequal> the argument (rhs).
      */
-    bool isEqual(const Decimal128& rhs);
-    bool isNotEqual(const Decimal128& rhs);
-    bool isGreater(const Decimal128& rhs);
-    bool isGreaterEqual(const Decimal128& rhs);
-    bool isLess(const Decimal128& rhs);
-    bool isLessEqual(const Decimal128& rhs);
+    bool isEqual(const Decimal128& rhs) const;
+    bool isNotEqual(const Decimal128& rhs) const;
+    bool isGreater(const Decimal128& rhs) const;
+    bool isGreaterEqual(const Decimal128& rhs) const;
+    bool isLess(const Decimal128& rhs) const;
+    bool isLessEqual(const Decimal128& rhs) const;
 
     /**
      * These functions get the minimum and maximum valid Decimal128s
