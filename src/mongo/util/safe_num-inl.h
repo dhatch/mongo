@@ -29,6 +29,9 @@
 
 namespace mongo {
 
+    inline SafeNum::SafeNumValue::SafeNumValue() : int32Val(0) {
+    }
+
     inline SafeNum::SafeNum() : _type(EOO) {
     }
 
@@ -54,6 +57,10 @@ namespace mongo {
 
     inline SafeNum::SafeNum(double num) : _type(NumberDouble) {
         _value.doubleVal = num;
+    }
+
+    inline SafeNum::SafeNum(Decimal128 num) : _type(NumberDecimal) {
+        _value.decimalVal = num;
     }
 
     inline bool SafeNum::operator==(const SafeNum& rhs) const {

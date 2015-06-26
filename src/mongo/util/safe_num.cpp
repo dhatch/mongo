@@ -52,6 +52,9 @@ namespace mongo {
             _type = NumberDouble;
             _value.doubleVal = element.Double();
             break;
+        case NumberDecimal:
+            _type = NumberDecimal;
+            _value.decimalVal = element.Decimal();
         default:
             _type = EOO;
         }
@@ -68,6 +71,9 @@ namespace mongo {
             break;
         case NumberDouble:
             os << "(NumberDouble)" << _value.doubleVal;
+            break;
+        case NumberDecimal:
+            os << "(NumberDecimal)" << _value.decimalVal.toString();
             break;
         case EOO:
             os << "(EOO)";
@@ -99,6 +105,14 @@ namespace mongo {
 
         // If the types of either side are mixed, we'll try to find the shortest type we
         // can upconvert to that would not sacrifice the accuracy in the process.
+
+        // If one side is a decimal, compare both sides as decimals.
+        if (_type == NumberDecimal || rhs._type == NumberDecimal) {
+            // Note: isEqual is faster than using compareDecimals, however it does not handle
+            // comparing NaN as equal (differing from BSONElement::woCompare).  This case
+            // is not handled for double comparison above eihter.
+            return getDecimal(*this).isEqual(getDecimal(rhs));
+        }
 
         // If none of the sides is a double, compare them as long's.
         if (_type != NumberDouble && rhs._type != NumberDouble) {
@@ -135,6 +149,8 @@ namespace mongo {
             return _value.int64Val == rhs._value.int64Val;
         case NumberDouble:
             return _value.doubleVal == rhs._value.doubleVal;
+        case NumberDecimal:
+            return _value.decimalVal.isEqual(rhs._value.decimalVal);
         case EOO:
             // EOO doesn't match anything, including itself.
         default:
@@ -161,8 +177,25 @@ namespace mongo {
             return snum._value.int64Val;
         case NumberDouble:
             return snum._value.doubleVal;
+        case NumberDecimal:
+            return snum._value.decimalVal.toDouble();
         default:
             return 0.0;
+        }
+    }
+
+    Decimal128 SafeNum::getDecimal(const SafeNum& snum) {
+        switch (snum._type) {
+            case NumberInt:
+                return snum._value.int32Val;
+            case NumberLong:
+                return snum._value.int64Val;
+            case NumberDouble:
+                return snum._value.doubleVal;
+            case NumberDecimal:
+                return snum._value.decimalVal;
+            default:
+                return 0.0;
         }
     }
 
@@ -210,6 +243,10 @@ namespace mongo {
         SafeNum addFloats(double lDouble, double rDouble) {
             double sum = lDouble + rDouble;
             return SafeNum(sum);
+        }
+
+        SafeNum addDecimals(Decimal128 lDecimal, Decimal128 rDecimal) {
+            return SafeNum(lDecimal.add(rDecimal));
         }
 
         SafeNum mulInt32Int32(int lInt32, int rInt32) {
@@ -279,6 +316,10 @@ namespace mongo {
             return SafeNum(product);
         }
 
+        SafeNum mulDecimals(Decimal128 lDecimal, Decimal128 rDecimal) {
+            return SafeNum(lDecimal.multiply(rDecimal));
+        }
+
     } // namespace
 
     SafeNum SafeNum::addInternal(const SafeNum& lhs, const SafeNum& rhs) {
@@ -299,6 +340,10 @@ namespace mongo {
 
         if (lType == NumberLong && rType == NumberLong) {
             return addInt64Int64(lhs._value.int64Val, rhs._value.int64Val);
+        }
+
+        if (lType == NumberDecimal || rType == NumberDecimal) {
+            return addDecimals(getDecimal(lhs), getDecimal(rhs));
         }
 
         if ((lType == NumberInt || lType == NumberLong || lType == NumberDouble) &&
@@ -327,6 +372,10 @@ namespace mongo {
 
         if (lType == NumberLong && rType == NumberLong) {
             return mulInt64Int64(lhs._value.int64Val, rhs._value.int64Val);
+        }
+
+        if (lType == NumberDecimal || rType == NumberDecimal) {
+            return mulDecimals(getDecimal(lhs), getDecimal(rhs));
         }
 
         if ((lType == NumberInt || lType == NumberLong || lType == NumberDouble) &&
