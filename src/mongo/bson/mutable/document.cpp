@@ -1505,6 +1505,8 @@ namespace mutablebson {
             return static_cast<long long int>(getValueLong());
         case mongo::NumberDouble:
             return getValueDouble();
+        case mongo::NumberDecimal:
+            return getValueDecimal();
         default:
             return SafeNum();
         }
@@ -1929,6 +1931,8 @@ namespace mutablebson {
             return setValueLong(value._value.int64Val);
         case mongo::NumberDouble:
             return setValueDouble(value._value.doubleVal);
+        case mongo::NumberDecimal:
+            return setValueDecimal(value._value.decimalVal);
         default:
             return Status(
                 ErrorCodes::UnsupportedFormat,
@@ -2591,6 +2595,8 @@ namespace mutablebson {
             return makeElementLong(fieldName, value._value.int64Val);
         case mongo::NumberDouble:
             return makeElementDouble(fieldName, value._value.doubleVal);
+        case mongo::NumberDecimal:
+            return makeElementDecimal(fieldName, value._value.decimalVal);
         default:
             // Return an invalid element to indicate that we failed.
             return end();
