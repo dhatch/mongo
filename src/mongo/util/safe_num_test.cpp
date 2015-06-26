@@ -31,12 +31,14 @@
 #undef MONGO_PCH_WHITELISTED // for malloc/realloc pulled from bson
 
 #include "mongo/bson/bsontypes.h"
+#include "mongo/platform/decimal128.h"
 #include "mongo/util/safe_num.h"
 #include "mongo/unittest/unittest.h"
 
 namespace {
 
     using mongo::SafeNum;
+    using mongo::Decimal128;
 
     TEST(Basics, Initialization) {
         const SafeNum numInt(0);
@@ -47,6 +49,9 @@ namespace {
 
         const SafeNum numDouble(0.0);
         ASSERT_EQUALS(numDouble.type(), mongo::NumberDouble);
+
+        const SafeNum numDecimal(Decimal128("1.0"));
+        ASSERT_EQUALS(numDecimal.type(), mongo::NumberDecimal);
     }
 
     TEST(Comparison, EOO) {
@@ -67,18 +72,22 @@ namespace {
         const SafeNum one(1);
         const SafeNum oneLong(1LL);
         const SafeNum oneDouble(1.0);
+        const SafeNum oneDecimal(Decimal128(1));
         ASSERT_FALSE(one.isIdentical(oneLong));
         ASSERT_FALSE(oneLong.isIdentical(oneDouble));
         ASSERT_FALSE(oneDouble.isIdentical(one));
+        ASSERT_FALSE(oneDecimal.isIdentical(one));
     }
 
     TEST(Comparison, EquivalenceComparisonNormal) {
         const SafeNum one(1);
         const SafeNum oneLong(1LL);
         const SafeNum oneDouble(1.0);
+        const SafeNum oneDecimal(Decimal128(1));
         ASSERT_EQUALS(one, oneLong);
         ASSERT_EQUALS(oneLong, oneDouble);
         ASSERT_EQUALS(oneDouble, one);
+        ASSERT_EQUALS(oneDecimal, one);
     }
 
     TEST(Comparison, MaxIntInDouble) {
@@ -106,17 +115,27 @@ namespace {
         const SafeNum zeroInt32(0);
         const SafeNum zeroInt64(0LL);
         const SafeNum zeroDouble(0.0);
+        const SafeNum zeroDecimal(Decimal128(0));
         ASSERT_EQUALS((zeroInt32 + zeroInt64).type(), mongo::NumberLong);
         ASSERT_EQUALS((zeroInt64 + zeroInt32).type(), mongo::NumberLong);
         ASSERT_EQUALS((zeroInt32 + zeroDouble).type(), mongo::NumberDouble);
         ASSERT_EQUALS((zeroInt64 + zeroDouble).type(), mongo::NumberDouble);
 
+        ASSERT_EQUALS((zeroInt64 + zeroDecimal).type(), mongo::NumberDecimal);
+        ASSERT_EQUALS((zeroInt32 + zeroDecimal).type(), mongo::NumberDecimal);
+        ASSERT_EQUALS((zeroDouble + zeroDecimal).type(), mongo::NumberDecimal);
+        ASSERT_EQUALS((zeroDecimal + zeroInt32).type(), mongo::NumberDecimal);
+        ASSERT_EQUALS((zeroDecimal + zeroInt64).type(), mongo::NumberDecimal);
+        ASSERT_EQUALS((zeroDecimal + zeroDouble).type(), mongo::NumberDecimal);
+
         const SafeNum stillInt32(zeroInt32 + zeroInt32);
         const SafeNum stillInt64(zeroInt64 + zeroInt64);
         const SafeNum stillDouble(zeroDouble + zeroDouble);
+        const SafeNum stillDecimal(zeroDecimal + zeroDecimal);
         ASSERT_EQUALS(stillInt32.type(), mongo::NumberInt);
         ASSERT_EQUALS(stillInt64.type(), mongo::NumberLong);
         ASSERT_EQUALS(stillDouble.type(), mongo::NumberDouble);
+        ASSERT_EQUALS(stillDecimal.type(), mongo::NumberDecimal);
     }
 
     TEST(Addition, Overflow32to64) {
@@ -191,15 +210,22 @@ namespace {
         ASSERT_NOT_EQUALS(int64MinusOne, doubleResult);
     }
 
-    TEST(BitAnd, DoubleIsIgnored) {
+    TEST(BitAnd, FloatingPointIsIgnored) {
         const SafeNum val_int(static_cast<int>(1));
         const SafeNum val_ll(static_cast<long long>(1));
         const SafeNum val_double(1.0);
+        const SafeNum val_decimal(Decimal128(1));
         ASSERT_FALSE((val_int & val_double).isValid());
         ASSERT_FALSE((val_double & val_int).isValid());
         ASSERT_FALSE((val_ll & val_double).isValid());
         ASSERT_FALSE((val_double & val_ll).isValid());
         ASSERT_FALSE((val_double & val_double).isValid());
+        ASSERT_FALSE((val_int & val_decimal).isValid());
+        ASSERT_FALSE((val_double & val_decimal).isValid());
+        ASSERT_FALSE((val_ll & val_decimal).isValid());
+        ASSERT_FALSE((val_decimal & val_int).isValid());
+        ASSERT_FALSE((val_decimal & val_ll).isValid());
+        ASSERT_FALSE((val_decimal & val_double).isValid());
     }
 
     TEST(BitAnd, 32and32) {
@@ -235,15 +261,22 @@ namespace {
         ASSERT_TRUE(expected.isIdentical(result_b_s));
     }
 
-    TEST(BitOr, DoubleIsIgnored) {
+    TEST(BitOr, FloatingPointIsIgnored) {
         const SafeNum val_int(static_cast<int>(1));
         const SafeNum val_ll(static_cast<long long>(1));
         const SafeNum val_double(1.0);
+        const SafeNum val_decimal(Decimal128(1));
         ASSERT_FALSE((val_int | val_double).isValid());
         ASSERT_FALSE((val_double | val_int).isValid());
         ASSERT_FALSE((val_ll | val_double).isValid());
         ASSERT_FALSE((val_double | val_ll).isValid());
         ASSERT_FALSE((val_double | val_double).isValid());
+        ASSERT_FALSE((val_decimal | val_int).isValid());
+        ASSERT_FALSE((val_decimal | val_double).isValid());
+        ASSERT_FALSE((val_decimal | val_ll).isValid());
+        ASSERT_FALSE((val_int | val_decimal).isValid());
+        ASSERT_FALSE((val_ll | val_decimal).isValid());
+        ASSERT_FALSE((val_double | val_decimal).isValid());
     }
 
     TEST(BitOr, 32and32) {
@@ -278,15 +311,22 @@ namespace {
         ASSERT_TRUE(expected.isIdentical(result_b_s));
     }
 
-    TEST(BitXor, DoubleIsIgnored) {
+    TEST(BitXor, FloatingPointIsIgnored) {
         const SafeNum val_int(static_cast<int>(1));
         const SafeNum val_ll(static_cast<long long>(1));
         const SafeNum val_double(1.0);
+        const SafeNum val_decimal(Decimal128(1));
         ASSERT_FALSE((val_int ^ val_double).isValid());
         ASSERT_FALSE((val_double ^ val_int).isValid());
         ASSERT_FALSE((val_ll ^ val_double).isValid());
         ASSERT_FALSE((val_double ^ val_ll).isValid());
         ASSERT_FALSE((val_double ^ val_double).isValid());
+        ASSERT_FALSE((val_decimal ^ val_int).isValid());
+        ASSERT_FALSE((val_decimal ^ val_ll).isValid());
+        ASSERT_FALSE((val_decimal ^ val_double).isValid());
+        ASSERT_FALSE((val_int ^ val_decimal).isValid());
+        ASSERT_FALSE((val_ll ^ val_decimal).isValid());
+        ASSERT_FALSE((val_double ^ val_decimal).isValid());
     }
 
     TEST(BitXor, 32and32) {
@@ -361,19 +401,28 @@ namespace {
         const SafeNum zeroInt32(0);
         const SafeNum zeroInt64(0LL);
         const SafeNum zeroDouble(0.0);
+        const SafeNum zeroDecimal(Decimal128(0));
         ASSERT_EQUALS((zeroInt32 * zeroInt64).type(), mongo::NumberLong);
         ASSERT_EQUALS((zeroInt64 * zeroInt32).type(), mongo::NumberLong);
         ASSERT_EQUALS((zeroInt32 * zeroDouble).type(), mongo::NumberDouble);
         ASSERT_EQUALS((zeroInt64 * zeroDouble).type(), mongo::NumberDouble);
         ASSERT_EQUALS((zeroDouble * zeroInt32).type(), mongo::NumberDouble);
         ASSERT_EQUALS((zeroDouble * zeroInt64).type(), mongo::NumberDouble);
+        ASSERT_EQUALS((zeroDecimal * zeroInt32).type(), mongo::NumberDecimal);
+        ASSERT_EQUALS((zeroInt32 * zeroDecimal).type(), mongo::NumberDecimal);
+        ASSERT_EQUALS((zeroDecimal * zeroInt64).type(), mongo::NumberDecimal);
+        ASSERT_EQUALS((zeroInt64 * zeroDecimal).type(), mongo::NumberDecimal);
+        ASSERT_EQUALS((zeroDecimal * zeroDouble).type(), mongo::NumberDecimal);
+        ASSERT_EQUALS((zeroDouble * zeroDecimal).type(), mongo::NumberDecimal);
 
         const SafeNum stillInt32(zeroInt32 * zeroInt32);
         const SafeNum stillInt64(zeroInt64 * zeroInt64);
         const SafeNum stillDouble(zeroDouble * zeroDouble);
+        const SafeNum stillDecimal(zeroDecimal * zeroDecimal);
         ASSERT_EQUALS(stillInt32.type(), mongo::NumberInt);
         ASSERT_EQUALS(stillInt64.type(), mongo::NumberLong);
         ASSERT_EQUALS(stillDouble.type(), mongo::NumberDouble);
+        ASSERT_EQUALS(stillDecimal.type(), mongo::NumberDecimal);
     }
 
     TEST(Multiplication, Overflow32to64) {
