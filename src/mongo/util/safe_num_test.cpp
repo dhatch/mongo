@@ -31,6 +31,7 @@
 #undef MONGO_PCH_WHITELISTED // for malloc/realloc pulled from bson
 
 #include "mongo/bson/bsontypes.h"
+#include "mongo/bson/bsonobj.h"
 #include "mongo/platform/decimal128.h"
 #include "mongo/util/safe_num.h"
 #include "mongo/unittest/unittest.h"
@@ -51,6 +52,25 @@ namespace {
         ASSERT_EQUALS(numDouble.type(), mongo::NumberDouble);
 
         const SafeNum numDecimal(Decimal128("1.0"));
+        ASSERT_EQUALS(numDecimal.type(), mongo::NumberDecimal);
+    }
+
+    TEST(Basics, BSONElementInitialization) {
+        mongo::BSONObj o = BSON("numberInt" << 1 <<
+                         "numberLong" << 1LL <<
+                         "numberDouble" << 0.1 <<
+                         "NumberDecimal" << Decimal128("1"));
+
+        const SafeNum numInt(o.getField("numberInt"));
+        ASSERT_EQUALS(numInt.type(), mongo::NumberInt);
+
+        const SafeNum numLong(o.getField("numberLong"));
+        ASSERT_EQUALS(numLong.type(), mongo::NumberLong);
+
+        const SafeNum numDouble(o.getField("numberDouble"));
+        ASSERT_EQUALS(numDouble.type(), mongo::NumberDouble);
+
+        const SafeNum numDecimal(o.getField("NumberDecimal"));
         ASSERT_EQUALS(numDecimal.type(), mongo::NumberDecimal);
     }
 
