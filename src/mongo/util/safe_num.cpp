@@ -55,6 +55,7 @@ namespace mongo {
         case NumberDecimal:
             _type = NumberDecimal;
             _value.decimalVal = element.Decimal();
+            break;
         default:
             _type = EOO;
         }
