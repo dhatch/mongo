@@ -104,6 +104,7 @@ TEST(ExpressionAlgoIsSubsetOf, NullAndExists) {
 
 TEST(ExpressionAlgoIsSubsetOf, Compare_NaN) {
     ParsedMatchExpression nan("{x: NaN}");
+    ParsedMatchExpression decNan("{x : NumberDecimal(\"NaN\") }");
     ParsedMatchExpression lt("{x: {$lt: 5}}");
     ParsedMatchExpression lte("{x: {$lte: 5}}");
     ParsedMatchExpression gte("{x: {$gte: 5}}");
@@ -111,14 +112,23 @@ TEST(ExpressionAlgoIsSubsetOf, Compare_NaN) {
     ParsedMatchExpression in("{x: {$in: [5]}}");
 
     ASSERT_TRUE(expression::isSubsetOf(nan.get(), nan.get()));
+    ASSERT_TRUE(expression::isSubsetOf(decNan.get(), decNan.get()));
     ASSERT_FALSE(expression::isSubsetOf(nan.get(), lt.get()));
+    ASSERT_FALSE(expression::isSubsetOf(decNan.get(), lt.get()));
     ASSERT_FALSE(expression::isSubsetOf(lt.get(), nan.get()));
+    ASSERT_FALSE(expression::isSubsetOf(lt.get(), decNan.get()));
     ASSERT_FALSE(expression::isSubsetOf(nan.get(), lte.get()));
+    ASSERT_FALSE(expression::isSubsetOf(decNan.get(), lte.get()));
     ASSERT_FALSE(expression::isSubsetOf(lte.get(), nan.get()));
+    ASSERT_FALSE(expression::isSubsetOf(lte.get(), decNan.get()));
     ASSERT_FALSE(expression::isSubsetOf(nan.get(), gte.get()));
+    ASSERT_FALSE(expression::isSubsetOf(decNan.get(), gte.get()));
     ASSERT_FALSE(expression::isSubsetOf(gte.get(), nan.get()));
+    ASSERT_FALSE(expression::isSubsetOf(gte.get(), decNan.get()));
     ASSERT_FALSE(expression::isSubsetOf(nan.get(), gt.get()));
+    ASSERT_FALSE(expression::isSubsetOf(decNan.get(), gt.get()));
     ASSERT_FALSE(expression::isSubsetOf(gt.get(), nan.get()));
+    ASSERT_FALSE(expression::isSubsetOf(gt.get(), decNan.get()));
     ASSERT_FALSE(expression::isSubsetOf(nan.get(), in.get()));
     ASSERT_FALSE(expression::isSubsetOf(in.get(), nan.get()));
 }
