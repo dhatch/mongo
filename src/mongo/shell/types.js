@@ -323,6 +323,15 @@ NumberInt.prototype.tojson = function() {
     return this.toString();
 }
 
+// NumberDecimal
+if (! NumberDecimal.prototype) {
+    NumberDecimal.prototype = {}
+}
+
+NumberDecimal.prototype.tojson = function() {
+    return this.toString();
+}
+
 // ObjectId
 if (! ObjectId.prototype)
     ObjectId.prototype = {}
