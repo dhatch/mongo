@@ -75,9 +75,8 @@ public:
         static const int HIGH_64 = 0;
         static const int LOW_64 = 1;
 #endif
-
-        uint64_t high64;
         uint64_t low64;
+        uint64_t high64;
 
         /**
          * Constructors for Decimal128Value
@@ -138,7 +137,7 @@ public:
      * These functions get the inner Decimal128Value struct storing the decimal128 value.
      * Const cast away for the mutable version of the function.
      */
-    Decimal128Value getValue() const;
+    const Decimal128Value& getValue() const;
 
     /**
      * This function returns the decimal absolute value of the caller
@@ -149,9 +148,9 @@ public:
      * This set of functions converts a Decimal128 to a certain numeric type with a
      * given rounding mode.
      */
-    int32_t toInt(RoundingMode roundMode = kRoundTiesToEven);
-    int64_t toLong(RoundingMode roundMode = kRoundTiesToEven);
-    double toDouble(RoundingMode roundMode = kRoundTiesToEven);
+    int32_t toInt(RoundingMode roundMode = kRoundTiesToEven) const;
+    int64_t toLong(RoundingMode roundMode = kRoundTiesToEven) const;
+    double toDouble(RoundingMode roundMode = kRoundTiesToEven) const;
 
     /**
      * This function converts a Decimal128 to a string with the following semantics:
@@ -180,9 +179,9 @@ public:
      * the conversion has been performed exactly. In other words, it returns
      * whether the Decimal128 is truly an int, long, or double.
      */
-    std::pair<int32_t, bool> isAndToInt(RoundingMode roundMode = kRoundTiesToEven);
-    std::pair<int64_t, bool> isAndToLong(RoundingMode roundMode = kRoundTiesToEven);
-    std::pair<double, bool> isAndToDouble(RoundingMode roundMode = kRoundTiesToEven);
+    std::pair<int32_t, bool> isAndToInt(RoundingMode roundMode = kRoundTiesToEven) const;
+    std::pair<int64_t, bool> isAndToLong(RoundingMode roundMode = kRoundTiesToEven) const;
+    std::pair<double, bool> isAndToDouble(RoundingMode roundMode = kRoundTiesToEven) const;
 
     /**
      * This set of functions check whether a Decimal128 is Zero, NaN, or +/- Inf
@@ -210,6 +209,7 @@ public:
      */
     Decimal128 quantize(const Decimal128& reference,
                         RoundingMode roundMode = kRoundTiesToEven) const;
+
     /**
      * This function normalizes the cohort of a Decimal128 by forcing it to maximum
      * precision (34 decimal digits). This normalization is important when it is desirable
@@ -225,12 +225,12 @@ public:
      * comply with the IEEE 754-2008 spec. The comparison returns true if the caller
      * is <equal, notequal, greater, greaterequal, less, lessequal> the argument (other).
      */
-    bool isEqual(const Decimal128& other);
-    bool isNotEqual(const Decimal128& other);
-    bool isGreater(const Decimal128& other);
-    bool isGreaterEqual(const Decimal128& other);
-    bool isLess(const Decimal128& other);
-    bool isLessEqual(const Decimal128& other);
+    bool isEqual(const Decimal128& other) const;
+    bool isNotEqual(const Decimal128& other) const;
+    bool isGreater(const Decimal128& other) const;
+    bool isGreaterEqual(const Decimal128& other) const;
+    bool isLess(const Decimal128& other) const;
+    bool isLessEqual(const Decimal128& other) const;
 
 private:
     Decimal128Value _value;
