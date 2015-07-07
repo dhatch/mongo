@@ -429,7 +429,7 @@ TEST(Decimal128Test, TestDecimal128ToDoubleZero) {
 }
 
 TEST(Decimal128Test, TestDecimal128ToStringPos) {
-    std::string s = "2087.015E+281";  // +2087015E+278
+    std::string s = "2087.015E+281";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "2.087015E+284");
@@ -863,14 +863,14 @@ TEST(Decimal128Test, TestDecimal128EqualCase3) {
     ASSERT_FALSE(result);
 }
 
-TEST_F(Decimal128Test, TestDecimal128EqualCase4) {
+TEST(Decimal128Test, TestDecimal128EqualCase4) {
     Decimal128 d1("inf");
     Decimal128 d2("inf");
     bool result = d1.isEqual(d2);
     ASSERT_TRUE(result);
 }
 
-TEST_F(Decimal128Test, TestDecimal128NotEqualCase1) {
+TEST(Decimal128Test, TestDecimal128NotEqualCase1) {
     Decimal128 d1("25.05E20");
     Decimal128 d2("25.06E20");
     bool result = d1.isNotEqual(d2);
