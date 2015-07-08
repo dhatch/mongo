@@ -152,7 +152,27 @@ inline int compareDecimals(long long lhs, Decimal128 rhs) {
 
 // Compare decimal and double
 inline int compareDecimals(Decimal128 lhs, double rhs) {
-    return compareDecimals(lhs, Decimal128(rhs));
+    uint32_t sigFlags = Decimal128::SignalingFlag::kNoFlag;
+    double decToDouble = lhs.toDouble(&sigFlags, Decimal128::RoundingMode::kRoundTowardNegative);
+
+    if (decToDouble == rhs) {
+        // If our conversion was not exact, lhs was necessarily greater than rhs
+        // otherwise, they are equal
+        if (Decimal128::hasFlag(sigFlags, Decimal128::SignalingFlag::kInexact)) {
+            return 1;
+        } else {
+            return 0;
+        }
+    } else if (decToDouble < rhs) {
+        return -1;
+    } else if (decToDouble > rhs) {
+        return 1;
+    }
+
+    if (lhs.isNaN())
+        return (std::isnan(rhs) ? 0 : -1);
+    invariant(std::isnan(rhs));
+    return 1;
 }
 inline int compareDecimals(double lhs, Decimal128 rhs) {
     return -compareDecimals(rhs, Decimal128(lhs));

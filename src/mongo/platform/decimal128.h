@@ -96,6 +96,32 @@ public:
     };
 
     /**
+     * The signaling flag enum determines the signaling nature of a decimal operation.
+     * The values of these flags are defined in the Intel RDFP math library.
+     *
+     * The provided hasFlag method checks whether provided signalingFlags contains flag f.
+     *
+     * Example:
+     *     Decimal128 dcml = Decimal128('0.1');
+     *     uint32_t sigFlag = Decimal128::SignalingFlag::kNoFlag;
+     *     double dbl = dcml.toDouble(&sigFlag);
+     *     if Decimal128::hasFlag(sigFlag, SignalingFlag::kInexact)
+     *         cout << "inexact decimal to double conversion!" << endl;
+     */
+    enum SignalingFlag {
+        kNoFlag = 0x00,
+        kInvalid = 0x01,
+        kDivideByZero = 0x04,
+        kOverflow = 0x08,
+        kUnderflow = 0x10,
+        kInexact = 0x20,
+    };
+
+    static bool hasFlag(uint32_t signalingFlags, SignalingFlag f) {
+        return ((signalingFlags & f) != 0u);
+    }
+
+    /**
      * Default initialize Decimal128's value struct to zero
      */
     Decimal128() = default;
@@ -145,12 +171,47 @@ public:
     Decimal128 toAbs() const;
 
     /**
-     * This set of functions converts a Decimal128 to a certain numeric type with a
+     * This set of functions converts a Decimal128 to a certain integer type with a
      * given rounding mode.
+     *
+     * Each function is overloaded to provide an optional signalingFlags output parameter
+     * that can be set to one of the Decimal128::SignalingFlag enumerators:
+     * kNoFlag, kInvalid
+     *
+     * Note: The signaling flags for these functions only signal
+     * an invalid conversion. If inexact conversion flags are necessary, call
+     * the toTypeExact version of the function defined below. This set of operations
+     * (toInt, toLong) has better performance than the latter.
      */
     int32_t toInt(RoundingMode roundMode = kRoundTiesToEven) const;
+    int32_t toInt(uint32_t* signalingFlags, RoundingMode roundMode = kRoundTiesToEven) const;
     int64_t toLong(RoundingMode roundMode = kRoundTiesToEven) const;
+    int64_t toLong(uint32_t* signalingFlags, RoundingMode roundMode = kRoundTiesToEven) const;
+
+    /**
+     * This set of functions converts a Decimal128 to a certain integer type with a
+     * given rounding mode. The signaling flags for these functions will also signal
+     * inexact computation.
+     *
+     * Each function is overloaded to provide an optional signalingFlags output parameter
+     * that can be set to one of the Decimal128::SignalingFlag enumerators:
+     * kNoFlag, kInexact, kInvalid
+     */
+    int32_t toIntExact(RoundingMode roundMode = kRoundTiesToEven) const;
+    int32_t toIntExact(uint32_t* signalingFlags, RoundingMode roundMode = kRoundTiesToEven) const;
+    int64_t toLongExact(RoundingMode roundMode = kRoundTiesToEven) const;
+    int64_t toLongExact(uint32_t* signalingFlags, RoundingMode roundMode = kRoundTiesToEven) const;
+
+    /**
+     * These functions convert decimals to doubles and have the ability to signal
+     * inexact, underflow, overflow, and invalid operation.
+     *
+     * This function is overloaded to provide an optional signalingFlags output parameter
+     * that can be set to one of the Decimal128::SignalingFlag enumerators:
+     * kNoFlag, kInexact, kUnderflow, kOverflow, kInvalid
+     */
     double toDouble(RoundingMode roundMode = kRoundTiesToEven) const;
+    double toDouble(uint32_t* signalingFlags, RoundingMode roundMode = kRoundTiesToEven) const;
 
     /**
      * This function converts a Decimal128 to a string with the following semantics:
@@ -174,16 +235,6 @@ public:
     std::string toString() const;
 
     /**
-     * This set of functions converts a Decimal128 to a certain numerical type and
-     * returns a <value, boolean> pair where the boolean represents whether
-     * the conversion has been performed exactly. In other words, it returns
-     * whether the Decimal128 is truly an int, long, or double.
-     */
-    std::pair<int32_t, bool> isAndToInt(RoundingMode roundMode = kRoundTiesToEven) const;
-    std::pair<int64_t, bool> isAndToLong(RoundingMode roundMode = kRoundTiesToEven) const;
-    std::pair<double, bool> isAndToDouble(RoundingMode roundMode = kRoundTiesToEven) const;
-
-    /**
      * This set of functions check whether a Decimal128 is Zero, NaN, or +/- Inf
      */
     bool isZero() const;
@@ -198,16 +249,37 @@ public:
      * Rounding of results that require a precision greater than 34 decimal digits
      * is performed using the supplied rounding mode (defaulting to kRoundTiesToEven).
      * NaNs and infinities are handled according to the IEEE 754-2008 specification.
+     *
+     * Each function is overloaded to provide an optional signalingFlags output parameter
+     * that can be set to one of the Decimal128::SignalingFlag enumerators:
+     * kNoFlag, kInexact, kUnderflow, kOverflow, kInvalid
+     *
+     * The divide operation may also set signalingFlags to kDivideByZero
      */
     Decimal128 add(const Decimal128& other, RoundingMode roundMode = kRoundTiesToEven) const;
+    Decimal128 add(const Decimal128& other,
+                   uint32_t* signalingFlags,
+                   RoundingMode roundMode = kRoundTiesToEven) const;
     Decimal128 subtract(const Decimal128& other, RoundingMode roundMode = kRoundTiesToEven) const;
+    Decimal128 subtract(const Decimal128& other,
+                        uint32_t* signalingFlags,
+                        RoundingMode roundMode = kRoundTiesToEven) const;
     Decimal128 multiply(const Decimal128& other, RoundingMode roundMode = kRoundTiesToEven) const;
+    Decimal128 multiply(const Decimal128& other,
+                        uint32_t* signalingFlags,
+                        RoundingMode roundMode = kRoundTiesToEven) const;
     Decimal128 divide(const Decimal128& other, RoundingMode roundMode = kRoundTiesToEven) const;
+    Decimal128 divide(const Decimal128& other,
+                      uint32_t* signalingFlags,
+                      RoundingMode roundMode = kRoundTiesToEven) const;
 
     /**
      * This function quantizes the current decimal given a quantum reference
      */
     Decimal128 quantize(const Decimal128& reference,
+                        RoundingMode roundMode = kRoundTiesToEven) const;
+    Decimal128 quantize(const Decimal128& reference,
+                        uint32_t* signalingFlags,
                         RoundingMode roundMode = kRoundTiesToEven) const;
 
     /**
