@@ -39,4 +39,16 @@
     assert.eq(
         col.find({ 'decimal' : NumberDecimal('12345678901234567890.12345678901234') }).count(), 1,
         'precision missing');
+
+    col.drop();
+    // Maximum and Minimum Values
+    assert.writeOK(col.insert([
+        { 'max' : NumberDecimal("9999999999999999999999999999999999E6144") },
+        { 'min' : NumberDecimal("1E-6176") }
+    ]));
+
+    assert.eq(col.find({ 'max' : NumberDecimal("9999999999999999999999999999999999E6144") }).count(),
+              1);
+    assert.eq(col.find({ 'min' : NumberDecimal("1E-6176") }).count(),
+              1);
 }());
