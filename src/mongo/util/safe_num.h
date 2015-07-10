@@ -217,7 +217,7 @@ private:
 
     /**
      * Extracts the value of 'snum' in a long format. It assumes 'snum' is an NumberInt
-     * or a NumberDouble.
+     * or a NumberInt.
      */
     static long long getLongLong(const SafeNum& snum);
 
@@ -228,8 +228,8 @@ private:
     static double getDouble(const SafeNum& snum);
 
     /**
-     * Extracts the value of 'snum' in a Decimal128 format.  It assumes 'snum' is an
-     * NumberInt, NumberDouble, or NumberLong.  Integral values are converted exactly.
+     * Extracts the value of 'snum' in a Decimal128 format.  It assumes 'snum' is a
+     * valid SafeNum.  Integral values are converted exactly.
      * NumberDouble is converted to 15 digits of precision, as defined in Decimal128.
      */
     static Decimal128 getDecimal(const SafeNum& snum);
