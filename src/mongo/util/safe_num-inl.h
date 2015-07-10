@@ -29,7 +29,7 @@
 
 namespace mongo {
 
-inline SafeNum::SafeNumValue::SafeNumValue() : int32Val(0) {}
+//inline SafeNum::SafeNumValue::SafeNumValue() : int32Val(0) {}
 
 inline SafeNum::SafeNum() : _type(EOO) {}
 

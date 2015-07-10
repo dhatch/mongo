@@ -183,7 +183,7 @@ private:
         double doubleVal;
         Decimal128 decimalVal;
 
-        SafeNumValue();
+        //SafeNumValue();
     } _value;
 
     /**

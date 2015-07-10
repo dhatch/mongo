@@ -55,7 +55,7 @@ public:
          * Constructors for Decimal128Value
          * Default to zero, and from size 2 uint64_t array
          */
-        Decimal128Value();
+        Decimal128Value() = default;
         Decimal128Value(const uint64_t dval[2]);
     };
 
@@ -70,7 +70,7 @@ public:
     /**
      * Default initialize Decimal128's value struct to zero
      */
-    Decimal128();
+    Decimal128() = default;
 
     /**
      * This constructor takes in a raw decimal128 type, which consists of two
