@@ -1,7 +1,7 @@
 selector:
   js_test:
     roots:
-    - jstests/core/decimal*.js
+    - jstests/decimal/*.js
 
 executor:
   js_test:
