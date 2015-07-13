@@ -70,7 +70,7 @@ public:
     /**
      * Default initialize Decimal128's value struct to zero
      */
-    Decimal128() = default;
+    Decimal128();
 
     /**
      * This constructor takes in a raw decimal128 type, which consists of two

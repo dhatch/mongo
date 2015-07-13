@@ -181,9 +181,7 @@ private:
         int int32Val;
         long long int int64Val;
         double doubleVal;
-        Decimal128 decimalVal;
-
-        //SafeNumValue();
+        Decimal128::Decimal128Value decimalVal;
     } _value;
 
     /**

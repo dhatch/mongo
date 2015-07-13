@@ -90,12 +90,10 @@ BID_UINT128 quantizeTo15DecimalDigits(BID_UINT128 value,
     return value;
 }
 
-//Decimal128::Decimal128Value::Decimal128Value() : low64(0), high64(0) {}
-
 Decimal128::Decimal128Value::Decimal128Value(const uint64_t dval[2])
     : low64(dval[LOW_64]), high64(dval[HIGH_64]) {}
 
-//Decimal128::Decimal128() : _value() {}
+Decimal128::Decimal128() : _value() {}
 
 Decimal128::Decimal128(Decimal128::Decimal128Value dec128Value) : _value(dec128Value) {}
 
