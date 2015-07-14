@@ -215,7 +215,7 @@ private:
 
     /**
      * Extracts the value of 'snum' in a long format. It assumes 'snum' is an NumberInt
-     * or a NumberInt.
+     * or a NumberLong.
      */
     static long long getLongLong(const SafeNum& snum);
 
