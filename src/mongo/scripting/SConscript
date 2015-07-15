@@ -62,11 +62,12 @@ if usev8:
             'v8' + v8suffix + '_profiler.cpp',
         ],
         LIBDEPS=[
+            '$BUILD_DIR/mongo/db/service_context',
+            '$BUILD_DIR/mongo/platform/decimal_knobs',
+            '$BUILD_DIR/mongo/shell/mongojs',
+            '$BUILD_DIR/third_party/shim_v8',
             'bson_template_evaluator',
             'scripting_common',
-            '$BUILD_DIR/third_party/shim_v8',
-            '$BUILD_DIR/mongo/shell/mongojs',
-            '$BUILD_DIR/mongo/db/service_context',
         ],
     )
 else:
