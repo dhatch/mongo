@@ -31,6 +31,7 @@
 #include "mongo/base/data_view.h"
 #include "mongo/db/jsobj.h"
 #include "mongo/unittest/unittest.h"
+#include "mongo/platform/decimal128_knobs.h"
 #include "mongo/platform/random.h"
 #include "mongo/bson/bson_validate.h"
 #include "mongo/util/log.h"
@@ -206,6 +207,11 @@ TEST(BSONValidateFast, Simple0) {
 TEST(BSONValidateFast, Simple2) {
     char buf[64];
     for (int i = 1; i <= JSTypeMax; i++) {
+        // TODO: Experimental decimal support is enabled only under a flag
+        // turn it on here to test decimals and turn it off at the end of the loop.
+        if (i == NumberDecimal)
+            enableExperimentalDecimalSupport = true;
+
         BSONObjBuilder b;
         sprintf(buf, "foo%d", i);
         b.appendMinForType(buf, i);
@@ -213,6 +219,9 @@ TEST(BSONValidateFast, Simple2) {
         b.appendMaxForType(buf, i);
         BSONObj x = b.obj();
         ASSERT_OK(validateBSON(x.objdata(), x.objsize()));
+
+        if (i == NumberDecimal)
+            enableExperimentalDecimalSupport = false;
     }
 }
 
@@ -221,10 +230,16 @@ TEST(BSONValidateFast, Simple3) {
     BSONObjBuilder b;
     char buf[64];
     for (int i = 1; i <= JSTypeMax; i++) {
+        // TODO: Experimental decimal support is enabled only under a flag
+        // turn it on here to test decimals.
+        if (i == NumberDecimal)
+            enableExperimentalDecimalSupport = true;
+
         sprintf(buf, "foo%d", i);
         b.appendMinForType(buf, i);
         sprintf(buf, "bar%d", i);
         b.appendMaxForType(buf, i);
+
     }
     BSONObj x = b.obj();
     ASSERT_OK(validateBSON(x.objdata(), x.objsize()));
