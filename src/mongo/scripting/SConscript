@@ -50,7 +50,8 @@ env.Library(
 )
 
 if usev8:
-    scriptingEnv = env.Clone()
+    Import('decimalKnobsEnv')
+    scriptingEnv = decimalKnobsEnv.Clone()
     scriptingEnv.InjectThirdPartyIncludePaths(libraries=['v8'])
     scriptingEnv.Library(
         target='scripting',

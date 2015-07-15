@@ -2,6 +2,26 @@
 
 Import("env")
 
+decimalKnobsEnv = env.Clone()
+
+if GetOption('enable-experimental-decimal-support') == 'on':
+    decimalKnobsEnv.Append(
+        CPPDEFINES = {
+            "ENABLE_EXPERIMENTAL_DECIMAL_SUPPORT" : 1
+        }
+    )
+
+decimalKnobsEnv.Library(
+	target='decimal_knobs',
+	source=[
+        'decimal128_knobs.cpp',
+    ],
+    LIBDEPS=[
+        "$BUILD_DIR/mongo/db/server_parameters",
+    ])
+
+Export('decimalKnobsEnv')
+
 env.Library('platform', [
         'decimal128.cpp',
         'posix_fadvise.cpp',
@@ -11,7 +31,9 @@ env.Library('platform', [
         "shared_library_${TARGET_OS_FAMILY}.cpp",
         'strcasestr.cpp',
         ],
-        LIBDEPS=['$BUILD_DIR/third_party/shim_intel_decimal128'])
+        LIBDEPS=[
+            '$BUILD_DIR/third_party/shim_intel_decimal128',
+        ])
 
 env.CppUnitTest('atomic_word_test', 'atomic_word_test.cpp')
 env.CppUnitTest('bits_test', 'bits_test.cpp')

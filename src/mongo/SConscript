@@ -270,7 +270,8 @@ if env.TargetOSIs('osx') or env["_HAVEPCAP"]:
 # --- shell ---
 
 if not has_option('noshell') and usev8:
-    shell_core_env = env.Clone()
+    Import('decimalKnobsEnv')
+    shell_core_env = decimalKnobsEnv.Clone()
     if has_option("safeshell"):
         shell_core_env.Append(CPPDEFINES=["MONGO_SAFE_SHELL"])
     shell_core_env.Library("shell_core",
