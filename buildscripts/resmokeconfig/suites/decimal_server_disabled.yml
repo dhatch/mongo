@@ -1,0 +1,19 @@
+selector:
+  js_test:
+    roots:
+    - jstests/decimal/server_disabled/*.js
+
+executor:
+  js_test:
+    config:
+      shell_options:
+        enableExperimentalDecimalSupport: true
+    hooks:
+    - class: CleanEveryN
+      n: 20
+    fixture:
+      class: MongoDFixture
+      mongod_options: # enableExperimentalDecimalSupport disabled by default
+        nopreallocj: ''
+        set_parameters:
+          enableTestCommands: 1
