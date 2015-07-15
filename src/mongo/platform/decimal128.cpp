@@ -48,8 +48,9 @@ namespace mongo {
 // systems is longer than a uint64_t.  We need to cast down, although there
 // will not be data loss.
 inline Decimal128::Decimal128Value libraryTypeToDecimal128Value(BID_UINT128 value) {
-    return Decimal128::Decimal128Value(static_cast<uint64_t>(value.w[LOW_64]),
-                                       static_cast<uint64_t>(value.w[HIGH_64]));
+    return Decimal128::Decimal128Value(
+        static_cast<uint64_t>(value.w[Decimal128::Decimal128Value::LOW_64]),
+        static_cast<uint64_t>(value.w[Decimal128::Decimal128Value::HIGH_64]));
 }
 
 /**
@@ -94,8 +95,6 @@ BID_UINT128 quantizeTo15DecimalDigits(BID_UINT128 value,
 
 Decimal128::Decimal128Value::Decimal128Value(uint64_t low, uint64_t high)
     : high64(high), low64(low) {}
-
-Decimal128::Decimal128(Decimal128::Decimal128Value dec128Value) : _value(dec128Value) {}
 
 Decimal128::Decimal128(int32_t int32Value)
     : _value(libraryTypeToDecimal128Value(bid128_from_int32(int32Value))) {}
@@ -226,7 +225,7 @@ Decimal128::Decimal128Value Decimal128::getValue() const {
 Decimal128 Decimal128::toAbs() const {
     BID_UINT128 dec128 = decimal128ToLibraryType(_value);
     dec128 = bid128_abs(dec128);
-    return Decimal128(dec128.w);
+    return Decimal128(libraryTypeToDecimal128Value(dec128));
 }
 
 int32_t Decimal128::toInt(RoundingMode roundMode) {

@@ -107,10 +107,6 @@ public:
      */
     Decimal128(Decimal128::Decimal128Value dec128Value) : _value(dec128Value) {}
 
-    /**
-     * This constructor is an interface for creating static constants
-     */
-    Decimal128(const uint64_t dval[2]) : _value(dval) {}
     Decimal128(int32_t int32Value);
     Decimal128(int64_t int64Value);
 

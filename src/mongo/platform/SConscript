@@ -12,7 +12,9 @@ env.Library('platform', [
         "shared_library_${TARGET_OS_FAMILY}.cpp",
         'strcasestr.cpp',
         ],
-        LIBDEPS=['$BUILD_DIR/third_party/shim_intel_decimal128'])
+        LIBDEPS=[
+            '$BUILD_DIR/third_party/shim_intel_decimal128',
+        ])
 
 env.CppUnitTest('atomic_word_test', 'atomic_word_test.cpp')
 env.CppUnitTest('bits_test', 'bits_test.cpp')
