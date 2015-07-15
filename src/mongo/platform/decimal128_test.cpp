@@ -428,63 +428,63 @@ TEST(Decimal128Test, TestDecimal128ToDoubleZero) {
     ASSERT_EQUALS(result, 0.0);
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringPos) {
+TEST(Decimal128Test, TestDecimal128ToStringPos) {
     std::string s = "2087.015E+281";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "2.087015E+284");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringPos2) {
+TEST(Decimal128Test, TestDecimal128ToStringPos2) {
     std::string s = "10.50E3";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "1.050E+4");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringPos3) {
+TEST(Decimal128Test, TestDecimal128ToStringPos3) {
     std::string s = "10.51E3";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "1.051E+4");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringNeg) {
+TEST(Decimal128Test, TestDecimal128ToStringNeg) {
     std::string s = "-2087.015E-281";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "-2.087015E-278");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringPosNaN) {
+TEST(Decimal128Test, TestDecimal128ToStringPosNaN) {
     std::string s = "+NaN";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "NaN");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringInRangeZero1) {
+TEST(Decimal128Test, TestDecimal128ToStringInRangeZero1) {
     std::string s = "0";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "0");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringInRangeZero2) {
+TEST(Decimal128Test, TestDecimal128ToStringInRangeZero2) {
     std::string s = "0.0";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "0.0");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringInRangeZero3) {
+TEST(Decimal128Test, TestDecimal128ToStringInRangeZero3) {
     std::string s = "0.00";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "0.00");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringInRangeZero4) {
+TEST(Decimal128Test, TestDecimal128ToStringInRangeZero4) {
     std::string s = "000.0";
     Decimal128 d(s);
     std::string result = d.toString();
@@ -492,147 +492,147 @@ TEST_F(Decimal128Test, TestDecimal128ToStringInRangeZero4) {
 }
 
 
-TEST_F(Decimal128Test, TestDecimal128ToStringInRangeZero5) {
+TEST(Decimal128Test, TestDecimal128ToStringInRangeZero5) {
     std::string s = "0.000000000000";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "0E-12");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringInRangePos1) {
+TEST(Decimal128Test, TestDecimal128ToStringInRangePos1) {
     std::string s = "1234567890.1234567890";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "1234567890.1234567890");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringInRangePos2) {
+TEST(Decimal128Test, TestDecimal128ToStringInRangePos2) {
     std::string s = "5.00";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "5.00");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringInRangePos3) {
+TEST(Decimal128Test, TestDecimal128ToStringInRangePos3) {
     std::string s = "50.0";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "50.0");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringInRangePos4) {
+TEST(Decimal128Test, TestDecimal128ToStringInRangePos4) {
     std::string s = "5";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "5");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringInRangePos5) {
+TEST(Decimal128Test, TestDecimal128ToStringInRangePos5) {
     std::string s = "50";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "50");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringInRangePos5Minus) {
+TEST(Decimal128Test, TestDecimal128ToStringInRangePos5Minus) {
     std::string s = "-50";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "-50");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringInRangeNeg1) {
+TEST(Decimal128Test, TestDecimal128ToStringInRangeNeg1) {
     std::string s = ".05";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "0.05");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringInRangeNeg2) {
+TEST(Decimal128Test, TestDecimal128ToStringInRangeNeg2) {
     std::string s = ".5";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "0.5");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringInRangeNeg3) {
+TEST(Decimal128Test, TestDecimal128ToStringInRangeNeg3) {
     std::string s = ".0052";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "0.0052");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringInRangeNeg4) {
+TEST(Decimal128Test, TestDecimal128ToStringInRangeNeg4) {
     std::string s = ".005";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "0.005");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringInRangeNeg4Minus) {
+TEST(Decimal128Test, TestDecimal128ToStringInRangeNeg4Minus) {
     std::string s = "-.005";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "-0.005");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringOutRangeNeg1) {
+TEST(Decimal128Test, TestDecimal128ToStringOutRangeNeg1) {
     std::string s = ".0005";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "5E-4");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringOutRangeNeg2) {
+TEST(Decimal128Test, TestDecimal128ToStringOutRangeNeg2) {
     std::string s = ".000005123123123123";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "5.123123123123E-6");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringOutRangeNeg3) {
+TEST(Decimal128Test, TestDecimal128ToStringOutRangeNeg3) {
     std::string s = ".012587E-200";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "1.2587E-202");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringOutRangePos1) {
+TEST(Decimal128Test, TestDecimal128ToStringOutRangePos1) {
     std::string s = "1234567890123";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "1.234567890123E+12");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringOutRangePos2) {
+TEST(Decimal128Test, TestDecimal128ToStringOutRangePos2) {
     std::string s = "10201.01E14";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "1.020101E+18");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringOutRangePos3) {
+TEST(Decimal128Test, TestDecimal128ToStringOutRangePos3) {
     std::string s = "1234567890123456789012345678901234";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "1.234567890123456789012345678901234E+33");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringNegNaN) {
+TEST(Decimal128Test, TestDecimal128ToStringNegNaN) {
     std::string s = "-NaN";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "NaN");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringPosInf) {
+TEST(Decimal128Test, TestDecimal128ToStringPosInf) {
     std::string s = "+Infinity";
     Decimal128 d(s);
     std::string result = d.toString();
     ASSERT_EQUALS(result, "Inf");
 }
 
-TEST_F(Decimal128Test, TestDecimal128ToStringNegInf) {
+TEST(Decimal128Test, TestDecimal128ToStringNegInf) {
     std::string s = "-Infinity";
     Decimal128 d(s);
     std::string result = d.toString();
@@ -863,14 +863,14 @@ TEST(Decimal128Test, TestDecimal128EqualCase3) {
     ASSERT_FALSE(result);
 }
 
-TEST_F(Decimal128Test, TestDecimal128EqualCase4) {
+TEST(Decimal128Test, TestDecimal128EqualCase4) {
     Decimal128 d1("inf");
     Decimal128 d2("inf");
     bool result = d1.isEqual(d2);
     ASSERT_TRUE(result);
 }
 
-TEST_F(Decimal128Test, TestDecimal128NotEqualCase1) {
+TEST(Decimal128Test, TestDecimal128NotEqualCase1) {
     Decimal128 d1("25.05E20");
     Decimal128 d2("25.06E20");
     bool result = d1.isNotEqual(d2);
