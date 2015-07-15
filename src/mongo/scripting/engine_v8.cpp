@@ -36,8 +36,9 @@
 #include <iostream>
 
 #include "mongo/base/init.h"
-#include "mongo/db/service_context.h"
 #include "mongo/db/operation_context.h"
+#include "mongo/db/service_context.h"
+#include "mongo/platform/decimal128_knobs.h"
 #include "mongo/platform/unordered_set.h"
 #include "mongo/scripting/v8_db.h"
 #include "mongo/scripting/v8_utils.h"
@@ -1320,7 +1321,9 @@ void V8Scope::installBSONTypes() {
     injectV8Function("BinData", BinDataFT(), _global);
     injectV8Function("NumberLong", NumberLongFT(), _global);
     injectV8Function("NumberInt", NumberIntFT(), _global);
-    injectV8Function("NumberDecimal", NumberDecimalFT(), _global);
+    if (enableExperimentalDecimalSupport) {
+        injectV8Function("NumberDecimal", NumberDecimalFT(), _global);
+    }
     injectV8Function("Timestamp", TimestampFT(), _global);
 
     // These are instances created from the functions, not the functions themselves

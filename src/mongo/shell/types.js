@@ -322,12 +322,14 @@ NumberInt.prototype.tojson = function() {
 }
 
 // NumberDecimal
-if (! NumberDecimal.prototype) {
-    NumberDecimal.prototype = {}
-}
+if (typeof NumberDecimal !== 'undefined') {
+    if (! NumberDecimal.prototype) {
+        NumberDecimal.prototype = {}
+    }
 
-NumberDecimal.prototype.tojson = function() {
-    return this.toString();
+    NumberDecimal.prototype.tojson = function() {
+        return this.toString();
+    }
 }
 
 // ObjectId
