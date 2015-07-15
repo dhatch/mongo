@@ -1,10 +1,13 @@
 selector:
   js_test:
     roots:
-    - jstests/decimal/*.js
+    - jstests/decimal/server_enabled/*.js
 
 executor:
   js_test:
+    config:
+      shell_options:
+        enableExperimentalDecimalSupport: true
     hooks:
     - class: CleanEveryN
       n: 20
@@ -14,3 +17,4 @@ executor:
         nopreallocj: ''
         set_parameters:
           enableTestCommands: 1
+          enableExperimentalDecimalSupport: true
