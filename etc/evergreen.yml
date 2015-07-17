@@ -357,6 +357,7 @@ tasks:
   commands:
     - func: "do setup"
     - command: shell.exec
+      params:
         working_dir: src
         script: |
           set -o verbose
