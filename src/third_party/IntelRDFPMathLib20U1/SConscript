@@ -256,6 +256,8 @@ cpp_defines = {
     'USE_NATIVE_QUAD_TYPE': '0',
 }
 
+libs = []
+
 def removeIfPresent(lst, item):
     try:
         lst.remove(item)
@@ -284,6 +286,7 @@ if env.TargetOSIs('osx'):
 if env.TargetOSIs('linux') or env.TargetOSIs('solaris'):
     cpp_defines['LINUX'] = '1'
     cpp_defines['linux'] = '1'
+    libs.append('m')
 
 if env.TargetOSIs('freebsd') or env.TargetOSIs('openbsd'):
     cpp_defines['LINUX'] = '1'
@@ -351,3 +354,18 @@ if GetOption('enable-experimental-decimal-support') == 'on':
 
 for to_remove in ['-Werror', '-Wall', '-W']:
     removeIfPresent(env['CCFLAGS'], to_remove)
+
+# Build tests for intel library
+
+test = env.Program('readtest',
+    ['TESTS/readtest.c'],
+    LIBS=libs,
+    LIBDEPS=['intel_decimal128'])
+
+test_input = env.File('TESTS/readtest.in')
+AlwaysBuild(test_input)
+
+install_tests = env.Install('#build/third_party_tests/intel', [test, test_input])
+AlwaysBuild(install_tests)
+
+env.Alias('intel_tests', install_tests)
