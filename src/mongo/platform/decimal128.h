@@ -108,7 +108,7 @@ public:
     Decimal128(Decimal128::Decimal128Value dec128Value) : _value(dec128Value) {}
 
     Decimal128(int32_t int32Value);
-    Decimal128(int64_t int64Value);
+    Decimal128(long long int64Value);
 
     /**
      * This constructor takes a double and constructs a Decimal128 object
