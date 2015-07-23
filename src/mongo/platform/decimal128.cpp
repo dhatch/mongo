@@ -99,7 +99,7 @@ Decimal128::Decimal128Value::Decimal128Value(uint64_t low, uint64_t high)
 Decimal128::Decimal128(int32_t int32Value)
     : _value(libraryTypeToDecimal128Value(bid128_from_int32(int32Value))) {}
 
-Decimal128::Decimal128(int64_t int64Value)
+Decimal128::Decimal128(long long int64Value)
     : _value(libraryTypeToDecimal128Value(bid128_from_int64(int64Value))) {}
 
 Decimal128::Decimal128(double doubleValue, RoundingMode roundMode) {
