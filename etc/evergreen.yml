@@ -481,6 +481,22 @@ tasks:
       resmoke_args: --suites=auth --storageEngine=wiredTiger
 
 - <<: *task_template
+  name: decimal
+  commands:
+  - func: "do setup"
+  - func: "run tests"
+  vars:
+    resmoke_args: --suites=decimal_server_disabled,decimal_server_enabled,decimal_shell_disabled --storageEngine=mmapv1
+
+- <<: *task_template
+  name: decimal_WT
+  commands:
+  - func: "do setup"
+  - func: "run tests"
+  vars:
+    resmoke_args: --suites=decimal_server_disabled,decimal_server_enabled,decimal_shell_disabled --storageEngine=wiredTiger
+
+- <<: *task_template
   name: dbtest
   commands:
   - func: "do setup"
@@ -1538,6 +1554,8 @@ buildvariants:
   - name: aggregation_auth
   - name: auth
   - name: auth_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: disk
@@ -1637,6 +1655,8 @@ buildvariants:
   - name: aggregation_auth
   - name: auth
   - name: auth_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: disk
@@ -1713,6 +1733,7 @@ buildvariants:
   - name: aggregation
   - name: aggregation_auth
   - name: auth
+  - name: decimal
   - name: dbtest
   - name: disk
   - name: durability
@@ -1764,6 +1785,7 @@ buildvariants:
     - rhel55
   - name: aggregation_WT
   - name: auth_WT
+  - name: decimal_WT
   - name: dbtest_WT
   - name: gle_auth_WT
   - name: gle_auth_write_cmd_WT
@@ -1816,6 +1838,8 @@ buildvariants:
   - name: aggregation_auth
   - name: auth
   - name: auth_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: disk
@@ -1911,6 +1935,8 @@ buildvariants:
   - name: aggregation_auth
   - name: auth
   - name: auth_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: disk
@@ -2007,6 +2033,8 @@ buildvariants:
   - name: audit_WT
   - name: auth
   - name: auth_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: failpoints_auth
@@ -2060,6 +2088,8 @@ buildvariants:
   - name: aggregation_auth
   - name: auth
   - name: auth_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: disk
@@ -2152,6 +2182,7 @@ buildvariants:
     - rhel55
   - name: aggregation
   - name: auth
+  - name: decimal
   - name: dbtest
   - name: disk
   - name: durability
@@ -2237,6 +2268,8 @@ buildvariants:
   - name: aggregation_WT
   - name: auth
   - name: auth_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: disk
@@ -2325,6 +2358,8 @@ buildvariants:
   - name: aggregation_WT
   - name: auth
   - name: auth_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: disk
@@ -2400,6 +2435,8 @@ buildvariants:
   - name: aggregation_WT
   - name: auth
   - name: auth_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: disk
@@ -2467,6 +2504,8 @@ buildvariants:
     - windows-64-vs2013-compile
   - name: audit
   - name: audit_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: jsCore_auth
@@ -2510,6 +2549,8 @@ buildvariants:
   - name: aggregation_WT
   - name: auth
   - name: auth_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: disk
@@ -2589,6 +2630,7 @@ buildvariants:
     - windows-64-vs2013-compile
   - name: aggregation
   - name: auth
+  - name: decimal
   - name: dbtest
   - name: disk
   - name: durability
@@ -2629,6 +2671,8 @@ buildvariants:
   - name: aggregation_WT
   - name: auth
   - name: auth_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: disk
@@ -2711,6 +2755,8 @@ buildvariants:
   - name: aggregation_WT
   - name: auth
   - name: auth_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: disk
@@ -2795,6 +2841,8 @@ buildvariants:
   - name: aggregation_WT
   - name: auth
   - name: auth_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: disk
@@ -2845,6 +2893,8 @@ buildvariants:
   - name: lint
   - name: audit
   - name: audit_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: jsCore_auth
@@ -2884,6 +2934,8 @@ buildvariants:
     - rhel62-build
   - name: audit
   - name: audit_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: mmap
@@ -2922,6 +2974,8 @@ buildvariants:
   - name: compile
   - name: audit
   - name: audit_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: jsCore_auth
@@ -2964,6 +3018,8 @@ buildvariants:
   - name: aggregation_auth
   - name: auth
   - name: auth_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: disk
@@ -3059,6 +3115,8 @@ buildvariants:
   - name: aggregation_auth
   - name: auth
   - name: auth_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: disk
@@ -3154,6 +3212,8 @@ buildvariants:
   - name: aggregation_auth
   - name: auth
   - name: auth_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: disk
@@ -3251,6 +3311,8 @@ buildvariants:
     - ubuntu1204-build
   - name: audit
   - name: audit_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: jsCore_auth
@@ -3289,6 +3351,8 @@ buildvariants:
     - ubuntu1404-build
   - name: audit
   - name: audit_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: jsCore_auth
@@ -3331,6 +3395,8 @@ buildvariants:
     - suse11-build
   - name: audit
   - name: audit_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: jsCore_auth
@@ -3372,6 +3438,8 @@ buildvariants:
   - name: aggregation_auth
   - name: auth
   - name: auth_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: disk
@@ -3475,6 +3543,8 @@ buildvariants:
   - name: concurrency_replication_WT
   - name: concurrency_sharded
   - name: concurrency_sharded_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: disk
@@ -3543,6 +3613,8 @@ buildvariants:
     - debian71-build
   - name: audit
   - name: audit_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: jsCore_auth
@@ -3584,6 +3656,8 @@ buildvariants:
   - name: aggregation_auth
   - name: auth
   - name: auth_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: disk
@@ -3678,6 +3752,8 @@ buildvariants:
   - name: aggregation
   - name: aggregation_auth
   - name: auth
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   # - name: disk
   # - name: durability
@@ -3738,6 +3814,8 @@ buildvariants:
   - name: aggregation_auth
   - name: auth
   - name: auth_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: disk
@@ -3828,6 +3906,8 @@ buildvariants:
   - name: aggregation_auth
   - name: auth
   - name: auth_WT
+  - name: decimal
+  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
   - name: disk
