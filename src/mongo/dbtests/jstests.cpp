@@ -41,6 +41,8 @@
 #include "mongo/db/json.h"
 #include "mongo/db/operation_context_impl.h"
 #include "mongo/dbtests/dbtests.h"
+#include "mongo/platform/decimal128.h"
+#include "mongo/platform/decimal128_knobs.h"
 #include "mongo/scripting/engine.h"
 #include "mongo/util/concurrency/thread_name.h"
 #include "mongo/util/log.h"
@@ -831,6 +833,10 @@ public:
 class NumberDecimal {
 public:
     void run() {
+        // TODO: Experimental decimal support is enabled only under a flag
+        // turn it on here to test decimals and turn it off at the end of the test.
+        enableExperimentalDecimalSupport = true;
+
         unique_ptr<Scope> s(globalScriptEngine->newScope());
         BSONObjBuilder b;
         Decimal128 val = Decimal128("2.010");
@@ -854,21 +860,33 @@ public:
         stringstream ss;
         ss << "NumberDecimal(\"" << val.toString() << "\")";
         ASSERT_EQUALS(ss.str(), out.firstElement().valuestr());
+
+        enableExperimentalDecimalSupport = false;
     }
 };
 
 class NumberDecimalGetFromScope {
 public:
     void run() {
+        // TODO: Experimental decimal support is enabled only under a flag
+        // turn it on here to test decimals and turn it off at the end of the test.
+        enableExperimentalDecimalSupport = true;
+
         unique_ptr<Scope> s(globalScriptEngine->newScope());
         ASSERT(s->exec("a = 5;", "a", false, true, false));
         ASSERT_TRUE(Decimal128(5).isEqual(s->getNumberDecimal("a")));
+
+        enableExperimentalDecimalSupport = false;
     }
 };
 
 class NumberDecimalBigObject {
 public:
     void run() {
+        // TODO: Experimental decimal support is enabled only under a flag
+        // turn it on here to test decimals and turn it off at the end of the test.
+        enableExperimentalDecimalSupport = true;
+
         unique_ptr<Scope> s(globalScriptEngine->newScope());
 
         BSONObj in;
@@ -890,6 +908,8 @@ public:
         ASSERT(s->exec((string) "y = " + outString, "foo2", false, true, false));
         BSONObj out = s->getObject("y");
         ASSERT_EQUALS(in, out);
+
+        enableExperimentalDecimalSupport = false;
     }
 };
 
@@ -1162,6 +1182,10 @@ class TestRoundTrip {
 public:
     virtual ~TestRoundTrip() {}
     void run() {
+        // TODO: Experimental decimal support is enabled only under a flag
+        // turn it on here to test decimals and turn it off at the end of the test.
+        enableExperimentalDecimalSupport = true;
+
         // Insert in Javascript -> Find using DBDirectClient
 
         // Drop the collection
@@ -1194,6 +1218,8 @@ public:
         jsFind << "dbref = db.testroundtrip.findOne( { } , { _id : 0 } )\n"
                << "assert.eq(dbref, " << jsonOut() << ")";
         ASSERT_TRUE(client.eval("unittest", jsFind.str()));
+
+        enableExperimentalDecimalSupport = false;
     }
 
 protected:
