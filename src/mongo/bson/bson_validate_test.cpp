@@ -239,7 +239,6 @@ TEST(BSONValidateFast, Simple3) {
         b.appendMinForType(buf, i);
         sprintf(buf, "bar%d", i);
         b.appendMaxForType(buf, i);
-
     }
     BSONObj x = b.obj();
     ASSERT_OK(validateBSON(x.objdata(), x.objsize()));
