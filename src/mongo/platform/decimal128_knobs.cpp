@@ -27,6 +27,8 @@
  */
 
 #include "mongo/platform/decimal128_knobs.h"
+
+#include "mongo/config.h"
 #include "mongo/db/server_parameters.h"
 
 namespace mongo {
