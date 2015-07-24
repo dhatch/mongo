@@ -290,6 +290,7 @@ tasks:
           - "./dbtest*"
           - "./mongobridge*"
           - "buildscripts/**"
+          - "build/third_party_tests/**"
           - "*Example"
           - "*Test"
           - "./**.pdb"
@@ -361,6 +362,8 @@ tasks:
         working_dir: src
         script: |
           set -o verbose
+          set -o errexit
+          set -o pipefail
 
           ./build/third_party_tests/intel/readtest < build/third_party_tests/intel/readtest.in | tee tmp.out
           if grep "FAILED" tmp.out; then
