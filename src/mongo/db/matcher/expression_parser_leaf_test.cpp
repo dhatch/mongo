@@ -38,6 +38,7 @@
 #include "mongo/db/json.h"
 #include "mongo/db/matcher/expression.h"
 #include "mongo/db/matcher/expression_leaf.h"
+#include "mongo/platform/decimal128.h"
 #include "mongo/util/log.h"
 
 namespace mongo {
@@ -608,6 +609,16 @@ TEST(MatchExpressionParserLeafTest, TypeDoubleOperator) {
     ASSERT(!result.getValue()->matchesBSON(BSON("x" << 5)));
 }
 
+TEST(MatchExpressionParserLeafTest, TypeDecimalOperator) {
+    BSONObj query = BSON("x" << BSON("$type" << mongo::NumberDecimal));
+    StatusWithMatchExpression result = MatchExpressionParser::parse(query);
+    ASSERT_TRUE(result.isOK());
+    std::unique_ptr<MatchExpression> destroy(result.getValue());
+
+    ASSERT_FALSE(result.getValue()->matchesBSON(BSON("x" << 5.3)));
+    ASSERT_TRUE(result.getValue()->matchesBSON(BSON("x" << mongo::Decimal128("1"))));
+}
+
 TEST(MatchExpressionParserLeafTest, TypeNull) {
     BSONObj query = BSON("x" << BSON("$type" << jstNULL));
     StatusWithMatchExpression result = MatchExpressionParser::parse(query);
@@ -655,6 +666,17 @@ TEST(MatchExpressionParserLeafTest, TypeStringnameDouble) {
     ASSERT(tmeNumberDouble->getType() == NumberDouble);
     ASSERT_TRUE(tmeNumberDouble->matchesBSON(fromjson("{a: 5.4}")));
     ASSERT_FALSE(tmeNumberDouble->matchesBSON(fromjson("{a: NumberInt(5)}")));
+}
+
+TEST(MatchExpressionParserLeafTest, TypeStringNameNumberDecimal) {
+    StatusWithMatchExpression typeNumberDecimal =
+        MatchExpressionParser::parse(fromjson("{a: {$type: 'decimal'}}"));
+    ASSERT(typeNumberDecimal.isOK());
+    TypeMatchExpression* tmeNumberDecimal =
+        static_cast<TypeMatchExpression*>(typeNumberDecimal.getValue());
+    ASSERT(tmeNumberDecimal->getData() == NumberDecimal);
+    ASSERT_TRUE(tmeNumberDecimal->matchesBSON(BSON("a" << mongo::Decimal128("1"))));
+    ASSERT_FALSE(tmeNumberDecimal->matchesBSON(fromjson("{a: true}")));
 }
 
 TEST(MatchExpressionParserLeafTest, TypeStringnameNumberInt) {

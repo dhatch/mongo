@@ -1554,10 +1554,10 @@ buildvariants:
   - name: aggregation_auth
   - name: auth
   - name: auth_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: disk
   - name: durability
   - name: dur_jscore_passthrough
@@ -1655,10 +1655,10 @@ buildvariants:
   - name: aggregation_auth
   - name: auth
   - name: auth_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: disk
   - name: durability
   - name: failpoints
@@ -1733,8 +1733,8 @@ buildvariants:
   - name: aggregation
   - name: aggregation_auth
   - name: auth
-  - name: decimal
   - name: dbtest
+  - name: decimal
   - name: disk
   - name: durability
   - name: dur_jscore_passthrough
@@ -1785,8 +1785,8 @@ buildvariants:
     - rhel55
   - name: aggregation_WT
   - name: auth_WT
-  - name: decimal_WT
   - name: dbtest_WT
+  - name: decimal_WT
   - name: gle_auth_WT
   - name: gle_auth_write_cmd_WT
   - name: gle_auth_basics_passthrough_WT
@@ -1838,10 +1838,10 @@ buildvariants:
   - name: aggregation_auth
   - name: auth
   - name: auth_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: disk
   - name: durability
   - name: dur_jscore_passthrough
@@ -1935,10 +1935,10 @@ buildvariants:
   - name: aggregation_auth
   - name: auth
   - name: auth_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: disk
   - name: durability
   - name: dur_jscore_passthrough
@@ -2033,10 +2033,10 @@ buildvariants:
   - name: audit_WT
   - name: auth
   - name: auth_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: failpoints_auth
   - name: jsCore_auth
   - name: mmap
@@ -2088,10 +2088,10 @@ buildvariants:
   - name: aggregation_auth
   - name: auth
   - name: auth_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: disk
   - name: durability
   - name: dur_jscore_passthrough
@@ -2182,8 +2182,8 @@ buildvariants:
     - rhel55
   - name: aggregation
   - name: auth
-  - name: decimal
   - name: dbtest
+  - name: decimal
   - name: disk
   - name: durability
   - name: failpoints
@@ -2268,10 +2268,10 @@ buildvariants:
   - name: aggregation_WT
   - name: auth
   - name: auth_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: disk
   - name: durability
   - name: failpoints
@@ -2358,10 +2358,10 @@ buildvariants:
   - name: aggregation_WT
   - name: auth
   - name: auth_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: disk
   - name: durability
   - name: failpoints
@@ -2435,10 +2435,10 @@ buildvariants:
   - name: aggregation_WT
   - name: auth
   - name: auth_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: disk
   - name: durability
   - name: failpoints
@@ -2504,10 +2504,10 @@ buildvariants:
     - windows-64-vs2013-compile
   - name: audit
   - name: audit_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: jsCore_auth
   - name: mmap
   - name: replicasets_auth
@@ -2549,10 +2549,10 @@ buildvariants:
   - name: aggregation_WT
   - name: auth
   - name: auth_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: disk
   - name: durability
   - name: failpoints
@@ -2630,8 +2630,8 @@ buildvariants:
     - windows-64-vs2013-compile
   - name: aggregation
   - name: auth
-  - name: decimal
   - name: dbtest
+  - name: decimal
   - name: disk
   - name: durability
   - name: failpoints
@@ -2671,10 +2671,10 @@ buildvariants:
   - name: aggregation_WT
   - name: auth
   - name: auth_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: disk
   - name: durability
   - name: failpoints
@@ -2755,10 +2755,10 @@ buildvariants:
   - name: aggregation_WT
   - name: auth
   - name: auth_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: disk
   - name: durability
   - name: failpoints
@@ -2841,10 +2841,10 @@ buildvariants:
   - name: aggregation_WT
   - name: auth
   - name: auth_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: disk
   - name: durability
   - name: failpoints
@@ -2893,10 +2893,10 @@ buildvariants:
   - name: lint
   - name: audit
   - name: audit_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: jsCore_auth
   - name: mmap
   - name: replicasets_auth
@@ -2934,10 +2934,10 @@ buildvariants:
     - rhel62-build
   - name: audit
   - name: audit_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: mmap
   - name: jsCore_auth
   - name: replicasets_auth
@@ -2974,10 +2974,10 @@ buildvariants:
   - name: compile
   - name: audit
   - name: audit_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: jsCore_auth
   - name: mmap
   - name: replicasets_auth
@@ -3018,10 +3018,10 @@ buildvariants:
   - name: aggregation_auth
   - name: auth
   - name: auth_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: disk
   - name: durability
   - name: dur_jscore_passthrough
@@ -3115,10 +3115,10 @@ buildvariants:
   - name: aggregation_auth
   - name: auth
   - name: auth_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: disk
   - name: durability
   - name: dur_jscore_passthrough
@@ -3212,10 +3212,10 @@ buildvariants:
   - name: aggregation_auth
   - name: auth
   - name: auth_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: disk
   - name: durability
   - name: dur_jscore_passthrough
@@ -3311,10 +3311,10 @@ buildvariants:
     - ubuntu1204-build
   - name: audit
   - name: audit_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: jsCore_auth
   - name: mmap
   - name: replicasets_auth
@@ -3351,10 +3351,10 @@ buildvariants:
     - ubuntu1404-build
   - name: audit
   - name: audit_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: jsCore_auth
   - name: mmap
   - name: replicasets_auth
@@ -3395,10 +3395,10 @@ buildvariants:
     - suse11-build
   - name: audit
   - name: audit_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: jsCore_auth
   - name: replicasets_auth
   - name: sasl
@@ -3438,10 +3438,10 @@ buildvariants:
   - name: aggregation_auth
   - name: auth
   - name: auth_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: disk
   - name: durability
   - name: dur_jscore_passthrough
@@ -3543,10 +3543,10 @@ buildvariants:
   - name: concurrency_replication_WT
   - name: concurrency_sharded
   - name: concurrency_sharded_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: disk
   - name: durability
   - name: failpoints
@@ -3613,10 +3613,10 @@ buildvariants:
     - debian71-build
   - name: audit
   - name: audit_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: jsCore_auth
   - name: mmap
   - name: replicasets_auth
@@ -3656,10 +3656,10 @@ buildvariants:
   - name: aggregation_auth
   - name: auth
   - name: auth_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: disk
   - name: durability
   - name: dur_jscore_passthrough
@@ -3752,9 +3752,9 @@ buildvariants:
   - name: aggregation
   - name: aggregation_auth
   - name: auth
+  - name: dbtest
   - name: decimal
   - name: decimal_WT
-  - name: dbtest
   # - name: disk
   # - name: durability
   # - name: dur_jscore_passthrough
@@ -3814,10 +3814,10 @@ buildvariants:
   - name: aggregation_auth
   - name: auth
   - name: auth_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: disk
   - name: durability
   - name: failpoints
@@ -3906,10 +3906,10 @@ buildvariants:
   - name: aggregation_auth
   - name: auth
   - name: auth_WT
-  - name: decimal
-  - name: decimal_WT
   - name: dbtest
   - name: dbtest_WT
+  - name: decimal
+  - name: decimal_WT
   - name: disk
   - name: durability
   - name: dur_jscore_passthrough

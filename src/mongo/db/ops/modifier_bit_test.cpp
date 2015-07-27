@@ -42,6 +42,7 @@
 namespace {
 
 using mongo::BSONObj;
+using mongo::Decimal128;
 using mongo::LogBuilder;
 using mongo::ModifierBit;
 using mongo::ModifierInterface;
@@ -114,6 +115,10 @@ TEST(Init, FailToInitWithInvalidValue) {
 
     // The argument to the sub-operator must be integral
     modObj = fromjson("{ $bit : { a : { or : 1.0 } } }");
+    ASSERT_NOT_OK(mod.init(modObj["$bit"].embeddedObject().firstElement(),
+                           ModifierInterface::Options::normal()));
+
+    modObj = fromjson("{ $bit : { a : { or : NumberDecimal(\"1.0\") } } }");
     ASSERT_NOT_OK(mod.init(modObj["$bit"].embeddedObject().firstElement(),
                            ModifierInterface::Options::normal()));
 }
