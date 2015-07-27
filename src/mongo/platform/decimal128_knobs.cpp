@@ -37,6 +37,5 @@ namespace mongo {
 const bool enableExperimentalDecimalSupport = true;
 #else
 const bool enableExperimentalDecimalSupport = false;
-#endif
 
 }  // namespace mongo
