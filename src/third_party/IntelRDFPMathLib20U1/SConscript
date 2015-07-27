@@ -343,10 +343,11 @@ if env.TargetOSIs('windows'):
 
     files += extra_objects
 
-env.Library(
-    target='intel_decimal128',
-    source=source_files,
-)
+if GetOption('enable-experimental-decimal-support') == 'on':
+    env.Library(
+        target='intel_decimal128',
+        source=source_files,
+    )
 
 for to_remove in ['-Werror', '-Wall', '-W']:
     removeIfPresent(env['CCFLAGS'], to_remove)
