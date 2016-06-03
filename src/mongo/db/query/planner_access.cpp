@@ -128,7 +128,8 @@ QuerySolutionNode* QueryPlannerAccess::makeCollectionScan(const CanonicalQuery& 
 
     // If the hint is {$natural: +-1} this changes the direction of the collection scan.
     if (!query.getQueryRequest().getHint().isEmpty()) {
-        BSONElement natural = dps::extractElementAtPath(query.getQueryRequest().getHint(), "$natural");
+        BSONElement natural =
+            dps::extractElementAtPath(query.getQueryRequest().getHint(), "$natural");
         if (!natural.eoo()) {
             csn->direction = natural.numberInt() >= 0 ? 1 : -1;
         }

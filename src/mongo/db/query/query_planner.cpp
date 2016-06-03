@@ -460,7 +460,8 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     // The hint or sort can be $natural: 1.  If this happens, output a collscan. If both
     // a $natural hint and a $natural sort are specified, then the direction of the collscan
     // is determined by the sign of the sort (not the sign of the hint).
-    if (!query.getQueryRequest().getHint().isEmpty() || !query.getQueryRequest().getSort().isEmpty()) {
+    if (!query.getQueryRequest().getHint().isEmpty() ||
+        !query.getQueryRequest().getSort().isEmpty()) {
         BSONObj hintObj = query.getQueryRequest().getHint();
         BSONObj sortObj = query.getQueryRequest().getSort();
         BSONElement naturalHint = dps::extractElementAtPath(hintObj, "$natural");
