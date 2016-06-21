@@ -31,6 +31,7 @@
 #include <cstddef>
 #include <vector>
 
+#include "mongo/base/string_data_comparator_interface.h"
 #include "mongo/bson/mutable/const_element.h"
 #include "mongo/bson/mutable/element.h"
 #include "mongo/util/mongoutils/str.h"
@@ -166,58 +167,76 @@ void deduplicateChildren(Element parent, EqualityComparator equal) {
 class woLess {
     // TODO: This should possibly derive from std::binary_function.
 public:
-    woLess(bool considerFieldName = true) : _considerFieldName(considerFieldName) {}
+    woLess(const StringData::ComparatorInterface* comparator = nullptr) : _comp(comparator) {}
+    woLess(bool considerFieldName = true,
+           const StringData::ComparatorInterface* comparator = nullptr)
+        : _considerFieldName(considerFieldName), _comp(comparator) {}
 
     inline bool operator()(const ConstElement& left, const ConstElement& right) const {
-        return left.compareWithElement(right, _considerFieldName) < 0;
+        return left.compareWithElement(right, _considerFieldName, _comp) < 0;
     }
 
 private:
-    const bool _considerFieldName;
+    const bool _considerFieldName = true;
+    const StringData::ComparatorInterface* _comp = nullptr;
 };
 
 /** A greater-than ordering for Elements that compares based on woCompare */
 class woGreater {
     // TODO: This should possibly derive from std::binary_function.
 public:
-    woGreater(bool considerFieldName = true) : _considerFieldName(considerFieldName) {}
+    woGreater(const StringData::ComparatorInterface* comparator = nullptr) : _comp(comparator) {}
+    woGreater(bool considerFieldName = true,
+              const StringData::ComparatorInterface* comparator = nullptr)
+        : _considerFieldName(considerFieldName), _comp(comparator) {}
 
     inline bool operator()(const ConstElement& left, const ConstElement& right) const {
-        return left.compareWithElement(right, _considerFieldName) > 0;
+        return left.compareWithElement(right, _considerFieldName, _comp) > 0;
     }
 
 private:
-    const bool _considerFieldName;
+    const bool _considerFieldName = true;
+    const StringData::ComparatorInterface* _comp = nullptr;
 };
 
 /** An equality predicate for elements that compares based on woCompare */
 class woEqual {
     // TODO: This should possibly derive from std::binary_function.
 public:
-    woEqual(bool considerFieldName = true) : _considerFieldName(considerFieldName) {}
+    woEqual(const StringData::ComparatorInterface* comparator = nullptr) : _comp(comparator) {}
+    woEqual(bool considerFieldName = true,
+            const StringData::ComparatorInterface* comparator = nullptr)
+        : _considerFieldName(considerFieldName), _comp(comparator) {}
 
     inline bool operator()(const ConstElement& left, const ConstElement& right) const {
-        return left.compareWithElement(right, _considerFieldName) == 0;
+        return left.compareWithElement(right, _considerFieldName, _comp) == 0;
     }
 
 private:
-    const bool _considerFieldName;
+    const bool _considerFieldName = true;
+    const StringData::ComparatorInterface* _comp = nullptr;
 };
 
 /** An equality predicate for elements that compares based on woCompare */
 class woEqualTo {
     // TODO: This should possibly derive from std::binary_function.
 public:
-    woEqualTo(const ConstElement& value, bool considerFieldName = true)
-        : _value(value), _considerFieldName(considerFieldName) {}
+    woEqualTo(const ConstElement& value,
+              const StringData::ComparatorInterface* comparator = nullptr)
+        : _value(value), _comp(comparator) {}
+    woEqualTo(const ConstElement& value,
+              bool considerFieldName = true,
+              const StringData::ComparatorInterface* comparator = nullptr)
+        : _value(value), _considerFieldName(considerFieldName), _comp(comparator) {}
 
     inline bool operator()(const ConstElement& elt) const {
-        return _value.compareWithElement(elt, _considerFieldName) == 0;
+        return _value.compareWithElement(elt, _considerFieldName, _comp) == 0;
     }
 
 private:
     const ConstElement& _value;
-    const bool _considerFieldName;
+    const bool _considerFieldName = true;
+    const StringData::ComparatorInterface* _comp = nullptr;
 };
 
 // NOTE: Originally, these truly were algorithms, in that they executed the loop over a
