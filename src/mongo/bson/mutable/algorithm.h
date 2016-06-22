@@ -167,7 +167,6 @@ void deduplicateChildren(Element parent, EqualityComparator equal) {
 class woLess {
     // TODO: This should possibly derive from std::binary_function.
 public:
-    woLess(const StringData::ComparatorInterface* comparator = nullptr) : _comp(comparator) {}
     woLess(bool considerFieldName = true,
            const StringData::ComparatorInterface* comparator = nullptr)
         : _considerFieldName(considerFieldName), _comp(comparator) {}
@@ -177,7 +176,7 @@ public:
     }
 
 private:
-    const bool _considerFieldName = true;
+    const bool _considerFieldName;
     const StringData::ComparatorInterface* _comp = nullptr;
 };
 
@@ -185,7 +184,6 @@ private:
 class woGreater {
     // TODO: This should possibly derive from std::binary_function.
 public:
-    woGreater(const StringData::ComparatorInterface* comparator = nullptr) : _comp(comparator) {}
     woGreater(bool considerFieldName = true,
               const StringData::ComparatorInterface* comparator = nullptr)
         : _considerFieldName(considerFieldName), _comp(comparator) {}
@@ -195,7 +193,7 @@ public:
     }
 
 private:
-    const bool _considerFieldName = true;
+    const bool _considerFieldName;
     const StringData::ComparatorInterface* _comp = nullptr;
 };
 
@@ -203,7 +201,6 @@ private:
 class woEqual {
     // TODO: This should possibly derive from std::binary_function.
 public:
-    woEqual(const StringData::ComparatorInterface* comparator = nullptr) : _comp(comparator) {}
     woEqual(bool considerFieldName = true,
             const StringData::ComparatorInterface* comparator = nullptr)
         : _considerFieldName(considerFieldName), _comp(comparator) {}
@@ -213,7 +210,7 @@ public:
     }
 
 private:
-    const bool _considerFieldName = true;
+    const bool _considerFieldName;
     const StringData::ComparatorInterface* _comp = nullptr;
 };
 
@@ -221,9 +218,6 @@ private:
 class woEqualTo {
     // TODO: This should possibly derive from std::binary_function.
 public:
-    woEqualTo(const ConstElement& value,
-              const StringData::ComparatorInterface* comparator = nullptr)
-        : _value(value), _comp(comparator) {}
     woEqualTo(const ConstElement& value,
               bool considerFieldName = true,
               const StringData::ComparatorInterface* comparator = nullptr)
@@ -235,7 +229,7 @@ public:
 
 private:
     const ConstElement& _value;
-    const bool _considerFieldName = true;
+    const bool _considerFieldName;
     const StringData::ComparatorInterface* _comp = nullptr;
 };
 
