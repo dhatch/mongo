@@ -228,7 +228,7 @@ public:
     }
 
 private:
-    const ConstElement& _value;
+    const ConstElement _value;
     const bool _considerFieldName;
     const StringData::ComparatorInterface* _comp = nullptr;
 };
