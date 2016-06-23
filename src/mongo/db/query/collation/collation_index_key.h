@@ -28,11 +28,11 @@
 
 #pragma once
 
+#include "mongo/bson/bsonelement.h"
 #include "mongo/bson/bsontypes.h"
 
 namespace mongo {
 
-class BSONElement;
 class BSONObjBuilder;
 class CollatorInterface;
 
@@ -67,17 +67,8 @@ public:
 
 private:
     // Translate all strings in 'element' into comparison keys using 'collator'. The result is
-    // appended to the BSONObjBuilder out, with field name fieldName.
-    static void translate(StringData fieldName,
-                          BSONElement element,
-                          const CollatorInterface* collator,
-                          BSONObjBuilder* out);
-
-    // Translate all strings in 'element' into comparison keys using 'collator'.  The result is
-    // append to the BSONArrayBuilder out.
-    static void translate(BSONElement element,
-                          const CollatorInterface* collator,
-                          BSONArrayBuilder* out);
+    // appended to the out, with field name fieldName.
+    static void translate(BSONObj obj, const CollatorInterface* collator, BSONObjBuilder* out);
 };
 
 }  // namespace mongo

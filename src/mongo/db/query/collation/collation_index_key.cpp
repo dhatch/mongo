@@ -30,74 +30,147 @@
 
 #include "mongo/db/query/collation/collation_index_key.h"
 
+#include <stack>
+
+#include "mongo/base/disallow_copying.h"
 #include "mongo/bson/bsonobj.h"
 #include "mongo/bson/bsonobjbuilder.h"
 #include "mongo/db/query/collation/collator_interface.h"
+#include "mongo/stdx/memory.h"
 #include "mongo/util/assert_util.h"
 
 namespace mongo {
 
-void CollationIndexKey::translate(StringData fieldName,
-                                  BSONElement element,
+namespace {
+template <typename Appendable>
+inline void append(StringData fieldName, const Appendable& append, BSONObjBuilder* out) {
+    out->append(fieldName, append);
+}
+
+template <typename Appendable>
+inline void append(StringData fieldName, const Appendable& append, BSONArrayBuilder* out) {
+    out->append(append);
+}
+
+inline void appendAs(StringData fieldName, BSONElement append, BSONObjBuilder* out) {
+    out->appendAs(append, fieldName);
+}
+
+inline void appendAs(StringData fieldName, BSONElement append, BSONArrayBuilder* out) {
+    out->append(append);
+}
+
+inline BufBuilder& subobjStart(StringData fieldName, BSONObjBuilder* bob) {
+    return bob->subobjStart(fieldName);
+}
+
+inline BufBuilder& subobjStart(StringData fieldName, BSONArrayBuilder* bab) {
+    return bab->subobjStart();
+}
+
+inline BufBuilder& subarrayStart(StringData fieldName, BSONObjBuilder* bob) {
+    return bob->subarrayStart(fieldName);
+}
+
+inline BufBuilder& subarrayStart(StringData fieldName, BSONArrayBuilder* bab) {
+    return bab->subarrayStart();
+}
+
+struct TranslateContext {
+    MONGO_DISALLOW_COPYING(TranslateContext);
+
+    TranslateContext(BSONObj iter, BSONObjBuilder* bob)
+        : objIter(iter), bob(bob), type(OBJ_CTX), isSubBuilder(false) {}
+    TranslateContext(BSONObj iter, std::unique_ptr<BSONObjBuilder>&& bob)
+        : objIter(iter), bob(std::move(bob)), type(OBJ_CTX) {}
+    TranslateContext(std::vector<BSONElement> vec, std::unique_ptr<BSONArrayBuilder>&& bab)
+        : arrIter(vec), bab(std::move(bab)), type(ARRAY_CTX) {}
+
+    ~TranslateContext() {
+        if (isSubBuilder) {
+            if (isArray()) {
+                bab.release();
+            } else {
+                bob.release();
+            }
+        } else {
+            if (isArray()) {
+                bab->doneFast();
+            } else {
+                bob->doneFast();
+            }
+        }
+    }
+
+    union {
+        BSONObj objIter;
+        std::vector<BSONElement> arrIter;
+    };
+
+    union {
+        std::unique_ptr<BSONObjBuilder> bob;
+        std::unique_ptr<BSONArrayBuilder> bab;
+    };
+
+    enum { ARRAY_CTX, OBJ_CTX } type;
+    bool isSubBuilder = true;
+
+    bool isArray() const {
+        return type == ARRAY_CTX;
+    }
+};
+
+using TranslateStack = std::stack<TranslateContext>;
+
+template <typename Builder, typename Iterator>
+void _translate(Iterator& iterator,
+                const CollatorInterface* collator,
+                Builder* out,
+                TranslateStack* ctxStack) {
+    for (const BSONElement& element : iterator) {
+        switch (element.type()) {
+            case BSONType::String: {
+                append(element.fieldNameStringData(),
+                       collator->getComparisonKey(element.valueStringData()).getKeyData(),
+                       out);
+            }
+            case BSONType::Object: {
+                auto bob = stdx::make_unique<BSONObjBuilder>(
+                    subobjStart(element.fieldNameStringData(), out));
+                ctxStack->emplace(element.embeddedObject(), std::move(bob));
+                return;
+            }
+            case BSONType::Array: {
+                auto bab = stdx::make_unique<BSONArrayBuilder>(
+                    subarrayStart(element.fieldNameStringData(), out));
+                ctxStack->emplace(element.Array(), std::move(bab));
+                return;
+            }
+            default:
+                out->append(element);
+        }
+    }
+
+    ctxStack.pop();
+}
+}
+
+void CollationIndexKey::translate(BSONObj obj,
                                   const CollatorInterface* collator,
                                   BSONObjBuilder* out) {
     invariant(collator);
 
-    switch (element.type()) {
-        case BSONType::String: {
-            out->append(fieldName,
-                        collator->getComparisonKey(element.valueStringData()).getKeyData());
-            return;
-        }
-        case BSONType::Object: {
-            BSONObjBuilder bob(out->subobjStart(fieldName));
-            for (const BSONElement& elt : element.embeddedObject()) {
-                translate(elt.fieldNameStringData(), elt, collator, &bob);
-            }
-            bob.doneFast();
-            return;
-        }
-        case BSONType::Array: {
-            BSONArrayBuilder bab(out->subarrayStart(fieldName));
-            for (const BSONElement& elt : element.Array()) {
-                translate(elt, collator, &bab);
-            }
-            bab.doneFast();
-            return;
-        }
-        default:
-            out->appendAs(element, fieldName);
-    }
-}
+    TranslateStack ctxStack;
+    ctxStack.emplace(obj, out);
 
-void CollationIndexKey::translate(BSONElement element,
-                                  const CollatorInterface* collator,
-                                  BSONArrayBuilder* out) {
-    invariant(collator);
+    while (!ctxStack.empty()) {
+        TranslateContext& ctx = ctxStack.top();
 
-    switch (element.type()) {
-        case BSONType::String: {
-            out->append(collator->getComparisonKey(element.valueStringData()).getKeyData());
-            return;
+        if (ctx.isArray()) {
+            _translate(ctx.arrIter, collator, ctx.bab.get(), &ctxStack);
+        } else {
+            _translate(ctx.objIter, collator, ctx.bob.get(), &ctxStack);
         }
-        case BSONType::Object: {
-            BSONObjBuilder bob(out->subobjStart());
-            for (const BSONElement& elt : element.embeddedObject()) {
-                translate(elt.fieldNameStringData(), elt, collator, &bob);
-            }
-            bob.doneFast();
-            return;
-        }
-        case BSONType::Array: {
-            BSONArrayBuilder bab(out->subarrayStart());
-            for (const BSONElement& elt : element.Array()) {
-                translate(elt, collator, &bab);
-            }
-            bab.doneFast();
-            return;
-        }
-        default:
-            out->append(element);
     }
 }
 
@@ -117,7 +190,7 @@ void CollationIndexKey::collationAwareIndexKeyAppend(BSONElement elt,
         return;
     }
 
-    translate("", elt, collator, out);
+    translate(elt.wrap(""), collator, out);
 }
 
 }  // namespace mongo
