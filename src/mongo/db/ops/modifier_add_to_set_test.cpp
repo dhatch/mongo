@@ -402,8 +402,8 @@ TEST(Deduplication, DeduplicationRespectsCollation) {
     ASSERT_FALSE(execInfo.noOp);
     ASSERT_OK(mod.apply());
 
-    ASSERT(doc.woCompare(fromjson("{ a : ['bar', 'FOO'] }")) == 0 ||
-           doc.woCompare(fromjson("{ a: ['bar', 'foo'] }")) == 0);
+    ASSERT(doc.compareWithBSONObj(fromjson("{ a : ['bar', 'FOO'] }"), false) == 0 ||
+           doc.compareWithBSONObj(fromjson("{ a: ['bar', 'foo'] }"), false) == 0);
 }
 
 TEST(Deduplication, ExistingDuplicatesArePreservedWithRespectToCollation) {
