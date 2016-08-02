@@ -42,22 +42,17 @@ class ValueComparator {
 public:
     /**
      * Functor compatible for use with unordered STL containers.
-     *
-     * TODO SERVER-25139: Remove the no-arguments constructor.
      */
     class EqualTo {
     public:
-        EqualTo() = default;
-
         explicit EqualTo(const ValueComparator* comparator) : _comparator(comparator) {}
 
         bool operator()(const Value& lhs, const Value& rhs) const {
-            return _comparator ? _comparator->compare(lhs, rhs) == 0
-                               : ValueComparator().compare(lhs, rhs) == 0;
+            return _comparator->compare(lhs, rhs) == 0;
         }
 
     private:
-        const ValueComparator* _comparator = nullptr;
+        const ValueComparator* _comparator;
     };
 
     /**
@@ -77,21 +72,17 @@ public:
 
     /**
      * Functor for computing the hash of a Value, compatible for use with unordered STL containers.
-     *
-     * TODO SERVER-25139: Remove the no-arguments constructor.
      */
     class Hasher {
     public:
-        Hasher() = default;
-
         explicit Hasher(const ValueComparator* comparator) : _comparator(comparator) {}
 
         size_t operator()(const Value& val) const {
-            return _comparator ? _comparator->hash(val) : ValueComparator().hash(val);
+            return _comparator->hash(val);
         }
 
     private:
-        const ValueComparator* _comparator = nullptr;
+        const ValueComparator* _comparator;
     };
 
     /**
@@ -143,6 +134,14 @@ public:
      */
     LessThan getLessThan() const {
         return LessThan(this);
+    }
+
+    /**
+     * Returns a function object which computes the hash of a Value such that equal Values under
+     * this comparator have equal hashes.
+     */
+    Hasher getHasher() const {
+        return Hasher(this);
     }
 
     /**

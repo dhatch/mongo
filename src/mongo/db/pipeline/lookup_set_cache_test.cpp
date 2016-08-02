@@ -33,6 +33,8 @@
 
 #include "mongo/bson/bsonobjbuilder.h"
 #include "mongo/db/pipeline/lookup_set_cache.h"
+#include "mongo/db/pipeline/value_comparator.h"
+#include "mongo/db/query/collation/collator_interface_mock.h"
 #include "mongo/unittest/unittest.h"
 
 namespace mongo {
@@ -54,7 +56,8 @@ BSONObj intToObj(int value) {
 }
 
 TEST(LookupSetCacheTest, InsertAndRetrieveWorksCorrectly) {
-    LookupSetCache cache;
+    const StringData::ComparatorInterface* stringComparator = nullptr;
+    LookupSetCache cache(stringComparator);
     cache.insert(Value(0), intToObj(1));
     cache.insert(Value(0), intToObj(2));
     cache.insert(Value(0), intToObj(3));
@@ -70,7 +73,8 @@ TEST(LookupSetCacheTest, InsertAndRetrieveWorksCorrectly) {
 }
 
 TEST(LookupSetCacheTest, CacheDoesEvictInExpectedOrder) {
-    LookupSetCache cache;
+    const StringData::ComparatorInterface* stringComparator = nullptr;
+    LookupSetCache cache(stringComparator);
 
     cache.insert(Value(0), intToObj(0));
     cache.insert(Value(1), intToObj(0));
@@ -89,7 +93,8 @@ TEST(LookupSetCacheTest, CacheDoesEvictInExpectedOrder) {
 }
 
 TEST(LookupSetCacheTest, ReadDoesMoveKeyToFrontOfCache) {
-    LookupSetCache cache;
+    const StringData::ComparatorInterface* stringComparator = nullptr;
+    LookupSetCache cache(stringComparator);
 
     cache.insert(Value(0), intToObj(0));
     cache.insert(Value(1), intToObj(0));
@@ -104,7 +109,8 @@ TEST(LookupSetCacheTest, ReadDoesMoveKeyToFrontOfCache) {
 }
 
 TEST(LookupSetCacheTest, InsertDoesPutKeyInMiddle) {
-    LookupSetCache cache;
+    const StringData::ComparatorInterface* stringComparator = nullptr;
+    LookupSetCache cache(stringComparator);
 
     cache.insert(Value(0), intToObj(0));
     cache.insert(Value(1), intToObj(0));
@@ -117,7 +123,8 @@ TEST(LookupSetCacheTest, InsertDoesPutKeyInMiddle) {
 }
 
 TEST(LookupSetCacheTest, EvictDoesRespectMemoryUsage) {
-    LookupSetCache cache;
+    const StringData::ComparatorInterface* stringComparator = nullptr;
+    LookupSetCache cache(stringComparator);
 
     cache.insert(Value(0), intToObj(0));
     cache.insert(Value(1), intToObj(0));
@@ -130,7 +137,8 @@ TEST(LookupSetCacheTest, EvictDoesRespectMemoryUsage) {
 }
 
 TEST(LookupSetCacheTest, ComplexAccessPatternDoesBehaveCorrectly) {
-    LookupSetCache cache;
+    const StringData::ComparatorInterface* stringComparator = nullptr;
+    LookupSetCache cache(stringComparator);
 
     for (int i = 0; i < 5; i++) {
         for (int j = 0; j < 5; j++) {
@@ -164,6 +172,45 @@ TEST(LookupSetCacheTest, ComplexAccessPatternDoesBehaveCorrectly) {
 
     ASSERT_EQ(cache.size(), 1U);
     ASSERT_TRUE(cache[Value(5)]);
+}
+
+TEST(LookupSetCacheTest, CacheKeysRespectCollation) {
+    CollatorInterfaceMock collator(CollatorInterfaceMock::MockType::kToLowerString);
+    LookupSetCache cache(&collator);
+
+    cache.insert(Value("foo"), intToObj(1));
+    cache.insert(Value("FOO"), intToObj(2));
+    cache.insert(Value("FOOz"), intToObj(3));
+
+    {
+        auto fooResult = cache[Value("FoO")];
+        ASSERT_TRUE(fooResult);
+        ASSERT_EQ(2U, fooResult->size());
+    }
+
+    {
+        auto foozResult = cache[Value("fooZ")];
+        ASSERT_TRUE(foozResult);
+        ASSERT_EQ(1U, foozResult->size());
+    }
+}
+
+// Cache values shouldn't respect collation, since they are distinct documents from the
+// foreign collection.
+TEST(LookupSetCacheTest, CachedValuesDontRespectCollation) {
+    CollatorInterfaceMock collator(CollatorInterfaceMock::MockType::kToLowerString);
+    LookupSetCache cache(&collator);
+
+    cache.insert(Value("foo"),
+                 BSON("foo"
+                      << "bar"));
+    cache.insert(Value("foo"),
+                 BSON("foo"
+                      << "BAR"));
+
+    auto fooResult = cache[Value("foo")];
+    ASSERT_TRUE(fooResult);
+    ASSERT_EQ(2U, fooResult->size());
 }
 
 }  // namespace mongo

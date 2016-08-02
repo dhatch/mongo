@@ -36,9 +36,10 @@
 #include <boost/multi_index_container.hpp>
 #include <boost/optional.hpp>
 #include <iostream>
-#include <unordered_map>
 #include <vector>
 
+#include "mongo/base/string_data_comparator_interface.h"
+#include "mongo/bson/bsonmisc.h"
 #include "mongo/bson/bsonobj.h"
 #include "mongo/db/pipeline/value.h"
 #include "mongo/db/pipeline/value_comparator.h"
@@ -55,15 +56,40 @@ using boost::multi_index::indexed_by;
 
 /**
  * A least-recently-used cache from key to a vector of values. It does not implement any default
- * size limit, but includes the ability to evict down to both a specific number of elements, and
- * down to a specific amount of memory. Memory usage includes only the size of the elements in the
- * cache at the time of insertion, not the overhead incurred by the data structures in use.
- *
- * TODO SERVER-25139: This class must make all comparisons of user data using the aggregation
- * operation's collation.
+ * size
+ * limit, but includes the ability to evict down to both a specific number of elements, and down to
+ * a specific amount of memory. Memory usage includes only the size of the elements in the cache at
+ * the time of insertion, not the overhead incurred by the data structures in use.
  */
 class LookupSetCache {
 public:
+    using Cached = std::pair<Value, std::vector<BSONObj>>;
+
+    // boost::multi_index_container provides a system for implementing a cache. Here, we create
+    // a container of std::pair<Value, BSONObjSet>, that is both sequenced, and has a unique
+    // index on the Value. From this, we are able to evict the least-recently-used member, and
+    // maintain key uniqueness.
+    using IndexedContainer =
+        multi_index_container<Cached,
+                              indexed_by<sequenced<>,
+                                         hashed_unique<member<Cached, Value, &Cached::first>,
+                                                       ValueComparator::Hasher,
+                                                       ValueComparator::EqualTo>>>;
+
+    /**
+     * Constructs the underlying cache data structure in such a way that respects the
+     * ValueComparator. This requires instantiating the multi_index_container with comparison and
+     * hasher functions obtained from the comparator.
+     */
+    LookupSetCache(const StringData::ComparatorInterface* stringComparator)
+        : _stringComparator(stringComparator),
+          _valueComparator(stringComparator),
+          _container(boost::make_tuple(IndexedContainer::nth_index<0>::type::ctor_args(),
+                                       boost::make_tuple(0,
+                                                         member<Cached, Value, &Cached::first>(),
+                                                         _valueComparator.getHasher(),
+                                                         _valueComparator.getEqualTo()))) {}
+
     /**
      * Insert "value" into the set with key "key". If "key" is already present in the cache, move it
      * to the middle of the cache. Otherwise, insert a new key in the middle of the cache.
@@ -166,18 +192,9 @@ public:
     }
 
 private:
-    using Cached = std::pair<Value, std::vector<BSONObj>>;
+    const StringData::ComparatorInterface* _stringComparator;
 
-    // boost::multi_index_container provides a system for implementing a cache. Here, we create
-    // a container of std::pair<Value, std::vector<BSONObj>>, that is both sequenced, and has a
-    // unique index on the Value. From this, we are able to evict the least-recently-used member,
-    // and maintain key uniqueness.
-    using IndexedContainer =
-        multi_index_container<Cached,
-                              indexed_by<sequenced<>,
-                                         hashed_unique<member<Cached, Value, &Cached::first>,
-                                                       ValueComparator::Hasher,
-                                                       ValueComparator::EqualTo>>>;
+    ValueComparator _valueComparator;
 
     IndexedContainer _container;
 
