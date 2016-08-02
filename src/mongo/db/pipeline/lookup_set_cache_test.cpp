@@ -28,11 +28,26 @@
 
 #include "mongo/platform/basic.h"
 
+#include <boost/optional.hpp>
+#include <vector>
+
 #include "mongo/bson/bsonobjbuilder.h"
 #include "mongo/db/pipeline/lookup_set_cache.h"
 #include "mongo/unittest/unittest.h"
 
 namespace mongo {
+
+bool vectorContains(const boost::optional<std::vector<BSONObj>>& vector,
+                    const BSONObj& expectedObj) {
+    ASSERT_TRUE(vector);
+    for (const auto& obj : *vector) {
+        if (obj == expectedObj) {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 BSONObj intToObj(int value) {
     return BSON("n" << value);
@@ -47,11 +62,11 @@ TEST(LookupSetCacheTest, InsertAndRetrieveWorksCorrectly) {
     cache.insert(Value(1), intToObj(5));
 
     ASSERT(cache[Value(0)]);
-    ASSERT_TRUE(cache[Value(0)]->count(intToObj(1)));
-    ASSERT_TRUE(cache[Value(0)]->count(intToObj(2)));
-    ASSERT_TRUE(cache[Value(0)]->count(intToObj(3)));
-    ASSERT_FALSE(cache[Value(0)]->count(intToObj(4)));
-    ASSERT_FALSE(cache[Value(0)]->count(intToObj(5)));
+    ASSERT_TRUE(vectorContains(cache[Value(0)], intToObj(1)));
+    ASSERT_TRUE(vectorContains(cache[Value(0)], intToObj(2)));
+    ASSERT_TRUE(vectorContains(cache[Value(0)], intToObj(3)));
+    ASSERT_FALSE(vectorContains(cache[Value(0)], intToObj(4)));
+    ASSERT_FALSE(vectorContains(cache[Value(0)], intToObj(5)));
 }
 
 TEST(LookupSetCacheTest, CacheDoesEvictInExpectedOrder) {
@@ -128,11 +143,11 @@ TEST(LookupSetCacheTest, ComplexAccessPatternDoesBehaveCorrectly) {
     ASSERT_FALSE(cache[Value(0)]);
 
     ASSERT_TRUE(cache[Value(1)]);
-    ASSERT_TRUE(cache[Value(1)]->count(intToObj(0)));
-    ASSERT_TRUE(cache[Value(1)]->count(intToObj(1)));
-    ASSERT_TRUE(cache[Value(1)]->count(intToObj(2)));
-    ASSERT_TRUE(cache[Value(1)]->count(intToObj(3)));
-    ASSERT_TRUE(cache[Value(1)]->count(intToObj(4)));
+    ASSERT_TRUE(vectorContains(cache[Value(1)], intToObj(0)));
+    ASSERT_TRUE(vectorContains(cache[Value(1)], intToObj(1)));
+    ASSERT_TRUE(vectorContains(cache[Value(1)], intToObj(2)));
+    ASSERT_TRUE(vectorContains(cache[Value(1)], intToObj(3)));
+    ASSERT_TRUE(vectorContains(cache[Value(1)], intToObj(4)));
 
     cache.evictUntilSize(2);
     // Cache ordering is now {1: ..., 3: ...}

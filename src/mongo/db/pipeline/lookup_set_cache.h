@@ -37,12 +37,13 @@
 #include <boost/optional.hpp>
 #include <iostream>
 #include <unordered_map>
-#include <unordered_set>
+#include <vector>
 
 #include "mongo/bson/bsonobj.h"
 #include "mongo/db/pipeline/value.h"
 #include "mongo/db/pipeline/value_comparator.h"
 #include "mongo/stdx/functional.h"
+#include "mongo/util/assert_util.h"
 
 namespace mongo {
 
@@ -53,10 +54,10 @@ using boost::multi_index::member;
 using boost::multi_index::indexed_by;
 
 /**
- * A least-recently-used cache from key to a set of values. It does not implement any default size
- * limit, but includes the ability to evict down to both a specific number of elements, and down to
- * a specific amount of memory. Memory usage includes only the size of the elements in the cache at
- * the time of insertion, not the overhead incurred by the data structures in use.
+ * A least-recently-used cache from key to a vector of values. It does not implement any default
+ * size limit, but includes the ability to evict down to both a specific number of elements, and
+ * down to a specific amount of memory. Memory usage includes only the size of the elements in the
+ * cache at the time of insertion, not the overhead incurred by the data structures in use.
  *
  * TODO SERVER-25139: This class must make all comparisons of user data using the aggregation
  * operation's collation.
@@ -86,7 +87,7 @@ public:
             // We did not insert due to a duplicate key.
             auto cached = *result.first;
             // Update the cached value, moving it to the middle of the cache.
-            cached.second.insert(value);
+            cached.second.push_back(value);
             _container.replace(result.first, cached);
             _container.relocate(it, result.first);
         } else {
@@ -151,9 +152,9 @@ public:
     }
 
     /**
-     * Retrieve the set of values with key "key". If not found, returns boost::none.
+     * Retrieve the vector of values with key "key". If not found, returns boost::none.
      */
-    boost::optional<std::unordered_set<BSONObj, BSONObj::Hasher>> operator[](Value key) {
+    boost::optional<std::vector<BSONObj>> operator[](Value key) {
         auto it = boost::multi_index::get<1>(_container).find(key);
         if (it != boost::multi_index::get<1>(_container).end()) {
             boost::multi_index::get<0>(_container)
@@ -165,12 +166,12 @@ public:
     }
 
 private:
-    using Cached = std::pair<Value, std::unordered_set<BSONObj, BSONObj::Hasher>>;
+    using Cached = std::pair<Value, std::vector<BSONObj>>;
 
     // boost::multi_index_container provides a system for implementing a cache. Here, we create
-    // a container of std::pair<Value, BSONObjSet>, that is both sequenced, and has a unique
-    // index on the Value. From this, we are able to evict the least-recently-used member, and
-    // maintain key uniqueness.
+    // a container of std::pair<Value, std::vector<BSONObj>>, that is both sequenced, and has a
+    // unique index on the Value. From this, we are able to evict the least-recently-used member,
+    // and maintain key uniqueness.
     using IndexedContainer =
         multi_index_container<Cached,
                               indexed_by<sequenced<>,
