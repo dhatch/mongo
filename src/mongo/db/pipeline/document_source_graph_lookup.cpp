@@ -73,11 +73,11 @@ boost::optional<Document> DocumentSourceGraphLookUp::getNext() {
     performSearch();
 
     std::vector<Value> results;
-    while (!_visited->empty()) {
+    while (!_visited.empty()) {
         // Remove elements one at a time to avoid consuming more memory.
-        auto it = _visited->begin();
+        auto it = _visited.begin();
         results.push_back(Value(it->second));
-        _visited->erase(it);
+        _visited.erase(it);
     }
 
     MutableDocument output(*_input);
@@ -85,7 +85,7 @@ boost::optional<Document> DocumentSourceGraphLookUp::getNext() {
 
     _visitedUsageBytes = 0;
 
-    invariant(_visited->empty());
+    invariant(_visited.empty());
 
     return output.freeze();
 }
@@ -96,7 +96,7 @@ boost::optional<Document> DocumentSourceGraphLookUp::getNextUnwound() {
     // If the unwind is not preserving empty arrays, we might have to process multiple inputs before
     // we get one that will produce an output.
     while (true) {
-        if (_visited->empty()) {
+        if (_visited.empty()) {
             // No results are left for the current input, so we should move on to the next one and
             // perform a new search.
             if (!(_input = pSource->getNext())) {
@@ -110,7 +110,7 @@ boost::optional<Document> DocumentSourceGraphLookUp::getNextUnwound() {
         }
         MutableDocument unwound(*_input);
 
-        if (_visited->empty()) {
+        if (_visited.empty()) {
             if ((*_unwind)->preserveNullAndEmptyArrays()) {
                 // Since "preserveNullAndEmptyArrays" was specified, output a document even though
                 // we had no result.
@@ -124,13 +124,13 @@ boost::optional<Document> DocumentSourceGraphLookUp::getNextUnwound() {
                 continue;
             }
         } else {
-            auto it = _visited->begin();
+            auto it = _visited.begin();
             unwound.setNestedField(_as, Value(it->second));
             if (indexPath) {
                 unwound.setNestedField(*indexPath, Value(_outputIndex));
                 ++_outputIndex;
             }
-            _visited->erase(it);
+            _visited.erase(it);
         }
 
         return unwound.freeze();
@@ -140,7 +140,7 @@ boost::optional<Document> DocumentSourceGraphLookUp::getNextUnwound() {
 void DocumentSourceGraphLookUp::dispose() {
     _cache.clear();
     _frontier->clear();
-    _visited->clear();
+    _visited.clear();
     pSource->dispose();
 }
 
@@ -204,7 +204,7 @@ BSONObj addDepthFieldToObject(const std::string& field, long long depth, BSONObj
 bool DocumentSourceGraphLookUp::addToVisitedAndFrontier(BSONObj result, long long depth) {
     Value _id = Value(result.getField("_id"));
 
-    if (_visited->find(_id) != _visited->end()) {
+    if (_visited.find(_id) != _visited.end()) {
         // We've already seen this object, don't repeat any work.
         return false;
     }
@@ -215,7 +215,7 @@ bool DocumentSourceGraphLookUp::addToVisitedAndFrontier(BSONObj result, long lon
         _depthField ? addDepthFieldToObject(_depthField->fullPath(), depth, result) : result;
 
     // Add the object to our '_visited' list.
-    (*_visited)[_id] = fullObject;
+    _visited[_id] = fullObject;
 
     // Update the size of '_visited' appropriately.
     _visitedUsageBytes += _id.getApproximateSize();
@@ -412,7 +412,6 @@ void DocumentSourceGraphLookUp::serializeToArray(std::vector<Value>& array, bool
 
 void DocumentSourceGraphLookUp::doInjectExpressionContext() {
     _frontier = pExpCtx->getValueComparator().makeUnorderedValueSet();
-    _visited = pExpCtx->getValueComparator().makeUnorderedValueMap<BSONObj>();
 }
 
 DocumentSourceGraphLookUp::DocumentSourceGraphLookUp(

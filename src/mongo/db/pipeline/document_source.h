@@ -1849,10 +1849,9 @@ private:
     boost::optional<ValueUnorderedSet> _frontier;
 
     // Tracks nodes that have been discovered for a given input. Keys are the '_id' value of the
-    // document from the foreign collection, value is the document itself.  We use boost::optional
-    // to defer initialization until the ExpressionContext containing the correct comparator is
-    // injected.
-    boost::optional<ValueUnorderedMap<BSONObj>> _visited;
+    // document from the foreign collection, value is the document itself.  The keys are
+    // compared using the simple collation.
+    ValueUnorderedMap<BSONObj> _visited;
 
     // Caches query results to avoid repeating any work. This structure is maintained across calls
     // to getNext().
