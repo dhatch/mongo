@@ -28,6 +28,7 @@
 
 #include "mongo/platform/basic.h"
 
+#include <algorithm>
 #include <boost/optional.hpp>
 #include <vector>
 
@@ -42,13 +43,7 @@ namespace mongo {
 bool vectorContains(const boost::optional<std::vector<BSONObj>>& vector,
                     const BSONObj& expectedObj) {
     ASSERT_TRUE(vector);
-    for (const auto& obj : *vector) {
-        if (obj == expectedObj) {
-            return true;
-        }
-    }
-
-    return false;
+    return std::find(vector.begin(), vector.end(), expectedObj) != vector.end();
 }
 
 BSONObj intToObj(int value) {

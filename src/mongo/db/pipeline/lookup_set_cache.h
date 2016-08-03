@@ -66,7 +66,8 @@ public:
     using Cached = std::pair<Value, std::vector<BSONObj>>;
 
     // boost::multi_index_container provides a system for implementing a cache. Here, we create
-    // a container of std::pair<Value, BSONObjSet>, that is both sequenced, and has a unique
+    // a container of std::pair<Value, std::vector<BSONObj>>BSONObjSet, that is both sequenced, and
+    // has a unique
     // index on the Value. From this, we are able to evict the least-recently-used member, and
     // maintain key uniqueness.
     using IndexedContainer =

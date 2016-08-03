@@ -1849,8 +1849,8 @@ private:
     boost::optional<ValueUnorderedSet> _frontier;
 
     // Tracks nodes that have been discovered for a given input. Keys are the '_id' value of the
-    // document from the foreign collection, value is the document itself.  The keys are
-    // compared using the simple collation.
+    // document from the foreign collection, value is the document itself.  The keys are compared
+    // using the simple collation.
     ValueUnorderedMap<BSONObj> _visited;
 
     // Caches query results to avoid repeating any work. This structure is maintained across calls
