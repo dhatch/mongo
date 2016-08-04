@@ -1843,6 +1843,10 @@ private:
     size_t _visitedUsageBytes = 0;
     size_t _frontierUsageBytes = 0;
 
+    // Some operations require a simple-collated comparison, which is not available from the
+    // expression context.
+    ValueComparator _simpleComparator;
+
     // Only used during the breadth-first search, tracks the set of values on the current frontier.
     // We use boost::optional to defer initialization until the ExpressionContext containing the
     // correct comparator is injected.

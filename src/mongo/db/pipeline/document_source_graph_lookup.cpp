@@ -412,7 +412,7 @@ void DocumentSourceGraphLookUp::serializeToArray(std::vector<Value>& array, bool
 
 void DocumentSourceGraphLookUp::doInjectExpressionContext() {
     _frontier = pExpCtx->getValueComparator().makeUnorderedValueSet();
-    _cache = LookupSetCache(pExpCtx->getCollator());
+    _cache = LookupSetCache(pExpCtx->getValueComparator());
 }
 
 DocumentSourceGraphLookUp::DocumentSourceGraphLookUp(
@@ -434,8 +434,8 @@ DocumentSourceGraphLookUp::DocumentSourceGraphLookUp(
       _additionalFilter(additionalFilter),
       _depthField(depthField),
       _maxDepth(maxDepth),
-      _visited(ValueComparator().makeUnorderedValueMap<BSONObj>()),
-      _cache(expCtx->getCollator()) {}
+      _visited(_simpleComparator.makeUnorderedValueMap<BSONObj>()),
+      _cache(expCtx->getValueComparator()) {}
 
 intrusive_ptr<DocumentSource> DocumentSourceGraphLookUp::createFromBson(
     BSONElement elem, const boost::intrusive_ptr<ExpressionContext>& expCtx) {

@@ -38,7 +38,6 @@
 #include <iostream>
 #include <vector>
 
-#include "mongo/base/string_data_comparator_interface.h"
 #include "mongo/bson/bsonmisc.h"
 #include "mongo/bson/bsonobj.h"
 #include "mongo/db/pipeline/value.h"
@@ -56,20 +55,18 @@ using boost::multi_index::indexed_by;
 
 /**
  * A least-recently-used cache from key to a vector of values. It does not implement any default
- * size
- * limit, but includes the ability to evict down to both a specific number of elements, and down to
- * a specific amount of memory. Memory usage includes only the size of the elements in the cache at
- * the time of insertion, not the overhead incurred by the data structures in use.
+ * size limit, but includes the ability to evict down to both a specific number of elements, and
+ * down to a specific amount of memory.  Memory usage includes only the size of the elements in the
+ * cache at the time of insertion, not the overhead incurred by the data structures in use.
  */
 class LookupSetCache {
 public:
     using Cached = std::pair<Value, std::vector<BSONObj>>;
 
-    // boost::multi_index_container provides a system for implementing a cache. Here, we create
-    // a container of std::pair<Value, std::vector<BSONObj>>BSONObjSet, that is both sequenced, and
-    // has a unique
-    // index on the Value. From this, we are able to evict the least-recently-used member, and
-    // maintain key uniqueness.
+    // boost::multi_index_container provides a system for implementing a cache.  Here, we create a
+    // container of std::pair<Value, std::vector<BSONObj>>BSONObjSet, that is both sequenced, and
+    // has a unique index on the Value. From this, we are able to evict the least-recently-used
+    // member, and maintain key uniqueness.
     using IndexedContainer =
         multi_index_container<Cached,
                               indexed_by<sequenced<>,
@@ -82,9 +79,8 @@ public:
      * ValueComparator. This requires instantiating the multi_index_container with comparison and
      * hasher functions obtained from the comparator.
      */
-    LookupSetCache(const StringData::ComparatorInterface* stringComparator)
-        : _stringComparator(stringComparator),
-          _valueComparator(stringComparator),
+    LookupSetCache(ValueComparator valueComparator)
+        : _valueComparator(valueComparator),
           _container(boost::make_tuple(IndexedContainer::nth_index<0>::type::ctor_args(),
                                        boost::make_tuple(0,
                                                          member<Cached, Value, &Cached::first>(),
@@ -193,8 +189,6 @@ public:
     }
 
 private:
-    const StringData::ComparatorInterface* _stringComparator;
-
     ValueComparator _valueComparator;
 
     IndexedContainer _container;
